@@ -3,10 +3,8 @@ package shapify
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math"
 
-	"github.com/arl/evolve"
 	"github.com/arl/evolve/condition"
 	"github.com/arl/evolve/engine"
 	"github.com/arl/evolve/operator"
@@ -54,18 +52,18 @@ func (c *Config) Setup() error {
 func Shapify(cfg Config) error {
 	// define the crossover
 	xover := xover.New(xover.BitstringMater{})
-	err := xover.SetPoints(1)
+	err := xover.SetPoints(2)
 	if err != nil {
 		return err
 	}
-	err = xover.SetProb(0.7)
+	err = xover.SetProb(0.9)
 	if err != nil {
 		return err
 	}
 
 	// define the mutation
 	mut := mutation.NewBitstring()
-	err = mut.SetProb(0.01)
+	err = mut.SetProb(0.5)
 	if err != nil {
 		return err
 	}
@@ -86,17 +84,17 @@ func Shapify(cfg Config) error {
 		return err
 	}
 
-	eng.AddObserver(
-		engine.ObserverFunc(func(data *evolve.PopulationData) {
-			log.Printf("Generation %d: %s (%v)\n",
-				data.GenNumber,
-				data.BestCand,
-				data.BestFitness)
-		}))
+	fo := &folderOutput{
+		folder:   "_tmp",
+		every:    200,
+		renderer: renderer{cfg: cfg},
+	}
+
+	eng.AddObserver(fo)
 
 	bests, _, err := eng.Evolve(
-		1,                // number of individuals per generation
-		engine.Elites(0), // nth best are put directly put into next population
+		20,               // number of individuals per generation
+		engine.Elites(2), // nth best are put directly put into next population
 		engine.EndOn(condition.TargetFitness{
 			Fitness: 0,
 			Natural: evaluator.IsNatural(),
@@ -109,3 +107,11 @@ func Shapify(cfg Config) error {
 	fmt.Println(bests[0])
 	return nil
 }
+
+/* GO                         C
+   set_base_image      ->     load base image, check depth, size, etc, save buffer
+   generate bistring   ->     render image, diff with base, return fitness
+   next generation     ->
+
+De temps en temps, call render_bitstring, mais independement du workflow de l'algorithme génétique.
+*/

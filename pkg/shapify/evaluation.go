@@ -3,37 +3,27 @@ package shapify
 import (
 	"fmt"
 	"image"
-	"image/png"
-	"os"
 
 	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/fogleman/gg"
 )
 
 type eval struct {
-	cfg    Config
-	img    *image.RGBA
-	ncands int
+	renderer
+	img *image.RGBA // reference image
 }
 
 func newEval(cfg Config) (*eval, error) {
-	e := &eval{cfg: cfg}
-	f, err := os.Open(cfg.BaseImage)
+	e := &eval{renderer: renderer{cfg: cfg}}
+	img, err := gg.LoadPNG(cfg.BaseImage)
 	if err != nil {
-		return e, fmt.Errorf("can't open base image %s: %s", cfg.BaseImage, err)
+		return nil, fmt.Errorf("can't load base image: %v", err)
 	}
-	defer f.Close()
-
-	img, err := png.Decode(f)
-	if err != nil {
-		return e, fmt.Errorf("can't decode image %s: %s", cfg.BaseImage, err)
-	}
-	var ok bool
-	e.img, ok = img.(*image.RGBA)
+	imgrgba, ok := img.(*image.RGBA)
 	if !ok {
-		return e, fmt.Errorf("wrong image format %T", img)
+		return nil, fmt.Errorf("base image is not image.RGBA but %T", img)
 	}
-
+	e.img = imgrgba
 	return e, nil
 }
 
@@ -45,49 +35,35 @@ func (e *eval) Fitness(icand interface{}, pop []interface{}) float64 {
 	return diff(e.img, candimg)
 }
 
-func (e *eval) draw(bs *bitstring.Bitstring) *image.RGBA {
-	// Initialize the graphic context on an RGBA image
-	dc := gg.NewContext(e.cfg.W, e.cfg.H)
-
-	var ibit uint
-
-	// fill background
-	bgcol := extractColorNRGBA(bs, 0, nbpchannel)
-	ibit += nbpcolor
-	dc.SetColor(bgcol)
-	dc.Fill()
-	dc.Clear()
-
-	for i := 0; i < int(e.cfg.Ntris); i++ {
-		col := extractColorNRGBA(bs, ibit, nbpchannel)
-		ibit += nbpcolor
-
-		dc.SetColor(col)
-
-		var (
-			xs [3]float64
-			ys [3]float64
-		)
-		for j := 0; j < 3; j++ {
-			xs[j] = float64(bs.Uintn(e.cfg.wbits, ibit))
-			ibit += e.cfg.wbits
-			ys[j] = float64(bs.Uintn(e.cfg.hbits, ibit))
-			ibit += e.cfg.hbits
-		}
-		dc.MoveTo(float64(xs[0]), float64(ys[0]))
-		dc.LineTo(float64(xs[1]), float64(ys[1]))
-		dc.LineTo(float64(xs[2]), float64(ys[2]))
-		dc.Fill()
+func abs(x int64) int64 {
+	if x < 0 {
+		return -x
 	}
-	if ibit != uint(bs.Len()) {
-		panic(fmt.Sprintf("only %d/%d bits have been used", ibit, bs.Len()))
-	}
-
-	//dc.SavePNG(fmt.Sprintf("test-%d.png", e.ncands))
-	e.ncands++
-	return dc.Image().(*image.RGBA)
+	return x
 }
 
 func diff(img1, img2 *image.RGBA) float64 {
-	return 1
+	var (
+		b    = img1.Bounds()
+		w, h = b.Dx(), b.Dy()
+		//off  int
+		diff int64
+	)
+
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			r1, g1, b1, _ := img1.At(x, y).RGBA()
+			r2, g2, b2, _ := img2.At(x, y).RGBA()
+
+			rd := abs(int64(r1) - int64(r2))
+			gd := abs(int64(g1) - int64(g2))
+			bd := abs(int64(b1) - int64(b2))
+			diff += rd + gd + bd
+
+			//off = y*img1.Stride + x*4
+			//diff += abs(int64(img1.Pix[off+0]) + int64(img1.Pix[off+1]) + int64(img1.Pix[off+2]) -
+			//int64(img2.Pix[off+0]) + int64(img2.Pix[off+1]) + int64(img2.Pix[off+2]))
+		}
+	}
+	return float64(diff)
 }

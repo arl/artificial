@@ -2,6 +2,7 @@ package shapify
 
 import (
 	"flag"
+	"fmt"
 	"image"
 	"image/png"
 	"os"
@@ -44,14 +45,14 @@ func Test_draw(t *testing.T) {
 			require.NoError(t, err)
 
 			e := eval{
-				cfg: Config{
-					W:     64,
-					H:     64,
-					wbits: 6,
-					hbits: 6,
-					Ntris: tt.ntris,
-				},
-			}
+				renderer: renderer{
+					cfg: Config{
+						W:     64,
+						H:     64,
+						wbits: 6,
+						hbits: 6,
+						Ntris: tt.ntris,
+					}}}
 
 			got := e.draw(ind)
 
@@ -76,6 +77,29 @@ func Test_draw(t *testing.T) {
 			if !reflect.DeepEqual(got, want) {
 				t.Errorf("draw() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_diff(t *testing.T) {
+	tests := []struct {
+		ref, cand string  // path to images to diff
+		want      float64 // expected diff
+	}{
+		{
+			ref:  "one_big_green_triangle.golden",
+			cand: "one_big_green_triangle.golden",
+			want: 0,
+		},
+	}
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+			refimg, err := loadPNGRGBA(filepath.Join("testdata", tt.ref))
+			require.NoError(t, err)
+			candimg, err := loadPNGRGBA(filepath.Join("testdata", tt.cand))
+			require.NoError(t, err)
+			got := diff(refimg, candimg)
+			require.Equal(t, tt.want, got)
 		})
 	}
 }
