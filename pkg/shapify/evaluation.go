@@ -52,17 +52,13 @@ func diff(img1, img2 *image.RGBA) float64 {
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			r1, g1, b1, _ := img1.At(x, y).RGBA()
-			r2, g2, b2, _ := img2.At(x, y).RGBA()
+			c1 := img1.RGBAAt(x, y)
+			c2 := img2.RGBAAt(x, y)
 
-			rd := abs(int64(r1) - int64(r2))
-			gd := abs(int64(g1) - int64(g2))
-			bd := abs(int64(b1) - int64(b2))
+			rd := abs(int64(c1.R) - int64(c2.R))
+			gd := abs(int64(c1.G) - int64(c2.G))
+			bd := abs(int64(c1.B) - int64(c2.B))
 			diff += rd + gd + bd
-
-			//off = y*img1.Stride + x*4
-			//diff += abs(int64(img1.Pix[off+0]) + int64(img1.Pix[off+1]) + int64(img1.Pix[off+2]) -
-			//int64(img2.Pix[off+0]) + int64(img2.Pix[off+1]) + int64(img2.Pix[off+2]))
 		}
 	}
 	return float64(diff)
