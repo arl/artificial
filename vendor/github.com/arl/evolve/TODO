@@ -1,0 +1,8 @@
+Add License to mt19937 package in the README.md
+
+Use https://github.com/gizak/termui to monitor Evolution in real
+time with the terminal, (TerminalObserver)
+
+
+Look ABSOLUTELY AT https://godoc.org/github.com/golang-ui/nuklear/nk
+to draw images from GO
