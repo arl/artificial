@@ -9,12 +9,12 @@ import (
 )
 
 type eval struct {
-	renderer
+	*renderer
 	img *image.RGBA // reference image
 }
 
-func newEval(cfg Config) (*eval, error) {
-	e := &eval{renderer: renderer{cfg: cfg}}
+func newEval(renderer *renderer, cfg Config) (*eval, error) {
+	e := &eval{renderer: renderer}
 	img, err := gg.LoadPNG(cfg.BaseImage)
 	if err != nil {
 		return nil, fmt.Errorf("can't load base image: %v", err)
@@ -31,8 +31,11 @@ func (e *eval) IsNatural() bool { return false }
 
 func (e *eval) Fitness(icand interface{}, pop []interface{}) float64 {
 	cand := icand.(*bitstring.Bitstring)
-	candimg := e.draw(cand)
-	return diff(e.img, candimg)
+	img := e.renderer.pool.Get().(*image.RGBA)
+	e.draw(img, cand)
+	d := diff(e.img, img)
+	e.renderer.pool.Put(img)
+	return d
 }
 
 func abs(x int64) int64 {

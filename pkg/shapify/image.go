@@ -3,6 +3,7 @@ package shapify
 import (
 	"fmt"
 	"image"
+	"sync"
 
 	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/fogleman/gg"
@@ -22,13 +23,23 @@ func loadPNGRGBA(path string) (*image.RGBA, error) {
 
 type renderer struct {
 	cfg Config
+
+	pool sync.Pool
 }
 
-func (r *renderer) draw(bs *bitstring.Bitstring) *image.RGBA {
-	// Initialize the graphic context on an RGBA image
-	// dst := image.NewRGBA(image.Rect(0, 0, e.cfg.W, e.cfg.H))
-	// dc := gg.NewContextForRGBA(dst)
-	dc := gg.NewContext(r.cfg.W, r.cfg.H)
+func newRenderer(cfg Config) *renderer {
+	return &renderer{
+		cfg: cfg,
+		pool: sync.Pool{
+			New: func() interface{} {
+				return image.NewRGBA(image.Rect(0, 0, cfg.W, cfg.H))
+			},
+		},
+	}
+}
+
+func (r *renderer) draw(dst *image.RGBA, bs *bitstring.Bitstring) {
+	dc := gg.NewContextForRGBA(dst)
 
 	var ibit uint
 
@@ -64,5 +75,5 @@ func (r *renderer) draw(bs *bitstring.Bitstring) *image.RGBA {
 		panic(fmt.Sprintf("only %d/%d bits have been used", ibit, bs.Len()))
 	}
 
-	return dc.Image().(*image.RGBA)
+	return
 }

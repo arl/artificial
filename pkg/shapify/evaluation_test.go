@@ -54,7 +54,8 @@ func Test_draw(t *testing.T) {
 						Ntris: tt.ntris,
 					}}}
 
-			got := e.draw(ind)
+			img := image.NewRGBA(image.Rect(0, 0, 64, 64))
+			e.draw(img, ind)
 
 			// update and/or read golden file
 			gf := filepath.Join("testdata", strings.ReplaceAll(tt.name, " ", "_")+".golden")
@@ -64,7 +65,7 @@ func Test_draw(t *testing.T) {
 				defer f.Close()
 				t.Log("update .golden file", gf)
 
-				err = png.Encode(f, got)
+				err = png.Encode(f, img)
 				require.NoErrorf(t, err, "failed to update .golden file %s", gf)
 			}
 
@@ -74,8 +75,8 @@ func Test_draw(t *testing.T) {
 			want, err := png.Decode(f)
 			require.NoError(t, err, "failed to decode .golden file")
 
-			if !reflect.DeepEqual(got, want) {
-				t.Errorf("draw() = %v, want %v", got, tt.want)
+			if !reflect.DeepEqual(img, want) {
+				t.Errorf("draw() = %v, want %v", img, tt.want)
 			}
 		})
 	}

@@ -68,7 +68,9 @@ func Shapify(cfg Config) error {
 		return err
 	}
 
-	evaluator, err := newEval(cfg)
+	renderer := newRenderer(cfg)
+
+	evaluator, err := newEval(renderer, cfg)
 	if err != nil {
 		return err
 	}
@@ -87,7 +89,7 @@ func Shapify(cfg Config) error {
 	fo := &folderOutput{
 		folder:   "_tmp",
 		every:    200,
-		renderer: renderer{cfg: cfg},
+		renderer: renderer,
 	}
 
 	eng.AddObserver(fo)

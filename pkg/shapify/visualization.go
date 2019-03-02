@@ -2,6 +2,7 @@ package shapify
 
 import (
 	"fmt"
+	"image"
 	"log"
 	"path/filepath"
 
@@ -13,17 +14,20 @@ import (
 type folderOutput struct {
 	folder   string // output folder
 	every    int    // save the best image every nth generation
-	renderer renderer
+	renderer *renderer
 }
 
 func (fo *folderOutput) PopulationUpdate(data *evolve.PopulationData) {
 	if data.GenNumber%fo.every == 0 {
-		bs := data.BestCand.(*bitstring.Bitstring)
-		img := fo.renderer.draw(bs)
+		cand := data.BestCand.(*bitstring.Bitstring)
+
+		img := fo.renderer.pool.Get().(*image.RGBA)
+		fo.renderer.draw(img, cand)
 		err := gg.SavePNG(filepath.Join(fo.folder, fmt.Sprintf("%d.png", data.GenNumber)), img)
 		if err != nil {
 			panic(err)
 		}
+		fo.renderer.pool.Put(img)
 		log.Printf("Generation %d: fitness %f stddev: %f", data.GenNumber, data.BestFitness, data.StdDev)
 	}
 }
