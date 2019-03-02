@@ -41,13 +41,16 @@ const (
 	nbheader   = nbpcolor // number of bits in header
 )
 
-func (g *gen) Generate(rnd *rand.Rand) interface{} {
+func totalBits(cfg Config) uint {
 	var (
-		nbpoint = g.cfg.hbits + g.cfg.wbits          // number of bits per point
-		nbtri   = 3*nbpoint + nbpcolor               // number of bits per triangle
-		nbits   = nbheader + uint(g.cfg.Ntris)*nbtri // number total of bits per image
+		nbpoint = cfg.hbits + cfg.wbits // number of bits per point
+		nbtri   = 3*nbpoint + nbpcolor  // number of bits per triangle
 	)
-	return generator.Bitstring(nbits).Generate(rnd)
+	return nbheader + uint(cfg.Ntris)*nbtri // number total of bits per image
+}
+
+func (g *gen) Generate(rnd *rand.Rand) interface{} {
+	return generator.Bitstring(totalBits(g.cfg)).Generate(rnd)
 }
 
 func extractColorNRGBA(bs *bitstring.Bitstring, i, bitsPerChannel uint) color.NRGBA {
