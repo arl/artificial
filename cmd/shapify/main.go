@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	"net/http"
+	_ "net/http/pprof"
+
 	"github.com/arl/artificial/pkg/shapify"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -20,6 +23,11 @@ func exitIfErr(err error, format string, args ...string) {
 }
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
+	// port := pflag.String("port", "8080", "web gui server port")
 	pflag.String("baseimage", "", "base image")
 	pflag.Parse()
 	viper.SetConfigName("config")
