@@ -55,9 +55,9 @@ func (g *gen) Generate(rnd *rand.Rand) interface{} {
 
 func extractColorNRGBA(bs *bitstring.Bitstring, i, bitsPerChannel uint) color.NRGBA {
 	return color.NRGBA{
-		R: uint8(bs.Uintn(bitsPerChannel, i+bitsPerChannel*0)),
-		G: uint8(bs.Uintn(bitsPerChannel, i+bitsPerChannel*1)),
-		B: uint8(bs.Uintn(bitsPerChannel, i+bitsPerChannel*2)),
-		A: uint8(bs.Uintn(bitsPerChannel, i+bitsPerChannel*3)),
+		R: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*0)),
+		G: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*1)),
+		B: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*2)),
+		A: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*3)),
 	}
 }

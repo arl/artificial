@@ -24,6 +24,7 @@ func loadPNGRGBA(path string) (*image.RGBA, error) {
 type renderer struct {
 	cfg Config
 
+	// essayer avec
 	pool sync.Pool
 }
 
@@ -61,9 +62,9 @@ func (r *renderer) draw(dst *image.RGBA, bs *bitstring.Bitstring) {
 			ys [3]float64
 		)
 		for j := 0; j < 3; j++ {
-			xs[j] = float64(bs.Uintn(r.cfg.wbits, ibit))
+			xs[j] = float64(bs.Grayn(r.cfg.wbits, ibit))
 			ibit += r.cfg.wbits
-			ys[j] = float64(bs.Uintn(r.cfg.hbits, ibit))
+			ys[j] = float64(bs.Grayn(r.cfg.hbits, ibit))
 			ibit += r.cfg.hbits
 		}
 		dc.MoveTo(float64(xs[0]), float64(ys[0]))

@@ -25,17 +25,17 @@ func Test_draw(t *testing.T) {
 		want  image.Image
 	}{
 		{
-			name: "one big green triangle",
+			name: "one big green triangle", // gray code
 			//      [                            1st triangle                           [          image  header        [
 			//      [   y2  x2  [  y1  x1   [  y0  x0   [ triangle color (opaque green) [ bgcolor (opaque black)        [
-			bs:    "1111110000000000001111110000000000001111111100000000111111110000000011111111000000000000000000000000",
+			bs:    "1000000000000000001000000000000000001000000000000000100000000000000010000000000000000000000000000000",
 			ntris: 1,
 		},
 		{
-			name: "red and green alpha triangles",
+			name: "red and green alpha triangles", // gray-code,
 			//     [                            2nd triangle                            [                            1st triangle                           [          image  header        [
-			//     [ y2  x2     [  y1  x1   [  y0  x0   [            color              [   y2  x2  [   y1  x1  [   y0  x0  [             color             [ bgcolor (opaque black)        [
-			bs:    "111111111111000000111111000000000000011111110000000000000000111111111111110000000000001111110000000000000111111100000000111111110000000011111111111111111111111111111111",
+			//     [    y2  x2  [  y1  x1   [  y0  x0   [            color              [   y2  x2  [   y1  x1  [   y0  x0  [             color             [ bgcolor (opaque black)        [
+			bs:    "100000100000000000100000000000000000010000000000000000000000100000001000000000000000001000000000000000000100000000000000100000010000000010000000100000001000000010000000",
 			ntris: 2,
 		},
 	}
@@ -45,7 +45,7 @@ func Test_draw(t *testing.T) {
 			require.NoError(t, err)
 
 			e := eval{
-				renderer: renderer{
+				renderer: &renderer{
 					cfg: Config{
 						W:     64,
 						H:     64,
