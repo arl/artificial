@@ -61,7 +61,9 @@ func diff(img1, img2 *image.RGBA) float64 {
 			rd := abs(int64(c1.R) - int64(c2.R))
 			gd := abs(int64(c1.G) - int64(c2.G))
 			bd := abs(int64(c1.B) - int64(c2.B))
-			diff += rd + gd + bd
+
+			// sum of squares differences
+			diff += rd*rd + gd*gd + bd*bd
 		}
 	}
 	return float64(diff)
