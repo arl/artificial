@@ -8,7 +8,6 @@ import (
 	"github.com/arl/evolve/condition"
 	"github.com/arl/evolve/engine"
 	"github.com/arl/evolve/operator"
-	"github.com/arl/evolve/operator/mutation"
 	"github.com/arl/evolve/operator/xover"
 	"github.com/arl/evolve/selection"
 )
@@ -50,22 +49,27 @@ func (c *Config) Setup() error {
 
 // Shapify ...
 func Shapify(cfg Config) error {
+	// prepare the set of cut points for crossover and mutation
+	tr := &trianglesRanges{}
+	tr.set(cfg)
+
 	// define the crossover
-	xover := xover.New(xover.BitstringMater{})
-	err := xover.SetPoints(2)
+	xover := xover.New(newMater(tr))
+	err := xover.SetPoints(3)
 	if err != nil {
 		return err
 	}
-	err = xover.SetProb(0.9)
+	err = xover.SetProb(0.7)
 	if err != nil {
 		return err
 	}
 
-	// define the mutation
-	mut := mutation.NewBitstring()
-	err = mut.SetProb(0.5)
-	if err != nil {
-		return err
+	// define the mutation operator
+	mut := &mutation{
+		pwholecolor: 0.01,
+		ptriangle:   0.02,
+		pcolor:      0.02,
+		ranges:      tr,
 	}
 
 	renderer := newRenderer(cfg)
@@ -87,15 +91,15 @@ func Shapify(cfg Config) error {
 	}
 
 	fo := &folderOutput{
-		folder:   "_tmp",
-		every:    200,
+		folder:   "./work/_tmp",
+		every:    50,
 		renderer: renderer,
 	}
 
 	eng.AddObserver(fo)
 
 	bests, _, err := eng.Evolve(
-		20,               // number of individuals per generation
+		50,               // number of individuals per generation
 		engine.Elites(2), // nth best are put directly put into next population
 		engine.EndOn(condition.TargetFitness{
 			Fitness: 0,
