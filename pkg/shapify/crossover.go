@@ -6,46 +6,15 @@ import (
 	"github.com/arl/evolve/pkg/bitstring"
 )
 
-type bitrange struct{ index, length uint }
-
-// ranges of bitranges when the bitstring codes for:
-// a background color + colored triangles
-type trianglesRanges struct {
-	wholetris []bitrange // whole triangles (color + vertices)
-	tris      []bitrange // triangles (vertices only)
-	colors    []bitrange // colors (background + triangles)
-}
-
-func (tr *trianglesRanges) set(cfg Config) {
-	nbpoint := cfg.hbits + cfg.wbits // number of bits per point
-	nbtri := 3*nbpoint + nbpcolor    // number of bits per triangle
-
-	// whole triangle cuts (color included)
-	for i := uint(0); i < uint(cfg.Ntris); i++ {
-		tr.wholetris = append(tr.wholetris, bitrange{nbheader + i*nbtri, nbtri})
-	}
-
-	// triangle cuts (3 vertices only)
-	for i := uint(0); i < uint(cfg.Ntris); i++ {
-		tr.tris = append(tr.tris, bitrange{nbheader + i*nbtri + nbpcolor, 3 * nbpoint})
-	}
-
-	// color cuts
-	tr.colors = append(tr.colors, bitrange{0, nbheader}) // background color (whole header)
-	for i := uint(0); i < uint(cfg.Ntris); i++ {
-		tr.colors = append(tr.colors, bitrange{nbheader + i*nbtri, nbpcolor})
-	}
-}
-
 type mater struct {
-	cutset []bitrange // only set of points where cuts can happen
+	cutset []cut // only set of points where cuts can happen
 }
 
-func newMater(tr *trianglesRanges) *mater {
-	cutset := append(tr.wholetris, tr.tris...)
-	cutset = append(cutset, tr.colors...)
+func newMater(cs *cutset) *mater {
+	// place all cuts of various types in a same slice, effectively
+	// giving each of them the same probability to 'happen'.
 	return &mater{
-		cutset: cutset,
+		cutset: append(append(cs.wholetris, cs.tris...), cs.colors...),
 	}
 }
 

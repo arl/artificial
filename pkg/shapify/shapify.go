@@ -49,12 +49,12 @@ func (c *Config) Setup() error {
 
 // Shapify ...
 func Shapify(cfg Config) error {
-	// prepare the set of cut points for crossover and mutation
-	tr := &trianglesRanges{}
-	tr.set(cfg)
+	// construct the cutset for crossover and mutation
+	cuts := cutset{}
+	cuts.set(cfg)
 
 	// define the crossover
-	xover := xover.New(newMater(tr))
+	xover := xover.New(newMater(&cuts))
 	err := xover.SetPoints(3)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func Shapify(cfg Config) error {
 		pwholecolor: 0.01,
 		ptriangle:   0.02,
 		pcolor:      0.02,
-		ranges:      tr,
+		cuts:        cuts,
 	}
 
 	renderer := newRenderer(cfg)
