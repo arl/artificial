@@ -18,9 +18,7 @@ func newMater(cs *cutset) *mater {
 	}
 }
 
-func (m *mater) Mate(parent1, parent2 interface{}, nxpts int64,
-	rng *rand.Rand) []interface{} {
-
+func (m *mater) Mate(parent1, parent2 interface{}, nxpts int64, rng *rand.Rand) []interface{} {
 	p1, p2 := parent1.(*bitstring.Bitstring), parent2.(*bitstring.Bitstring)
 	off1 := bitstring.Copy(p1)
 	off2 := bitstring.Copy(p2)
