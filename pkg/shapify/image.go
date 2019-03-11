@@ -22,9 +22,7 @@ func loadPNGRGBA(path string) (*image.RGBA, error) {
 }
 
 type renderer struct {
-	cfg Config
-
-	// essayer avec
+	cfg  Config
 	pool sync.Pool
 }
 

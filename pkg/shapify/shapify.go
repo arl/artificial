@@ -1,3 +1,5 @@
+// Package shapify implements a genetic algorithm evolving a population of images
+// made of colored shapes in order to match an user-provided reference image.
 package shapify
 
 import (
@@ -47,7 +49,8 @@ func (c *Config) Setup() error {
 	return nil
 }
 
-// Shapify ...
+// Shapify implements a genetic algorithm evolving a population of images
+// made of colored shapes in order to match an user-provided reference image.
 func Shapify(cfg Config) error {
 	// construct the cutset for crossover and mutation
 	cuts := cutset{}
@@ -75,7 +78,6 @@ func Shapify(cfg Config) error {
 	}
 
 	renderer := newRenderer(cfg)
-
 	evaluator, err := newEval(renderer, cfg)
 	if err != nil {
 		return err

@@ -49,7 +49,6 @@ func diff(img1, img2 *image.RGBA) float64 {
 	var (
 		b    = img1.Bounds()
 		w, h = b.Dx(), b.Dy()
-		//off  int
 		diff int64
 	)
 
@@ -62,7 +61,7 @@ func diff(img1, img2 *image.RGBA) float64 {
 			gd := abs(int64(c1.G) - int64(c2.G))
 			bd := abs(int64(c1.B) - int64(c2.B))
 
-			// sum of squares differences
+			// sum of squared differences
 			diff += rd*rd + gd*gd + bd*bd
 		}
 	}

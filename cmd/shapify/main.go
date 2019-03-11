@@ -41,5 +41,6 @@ func main() {
 	cfg.W = 64
 	cfg.H = 64
 	exitIfErr(cfg.Setup(), "Invalid config file")
+	log.Printf("config: %+v", cfg)
 	exitIfErr(shapify.Shapify(cfg), "Shapify error")
 }
