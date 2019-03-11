@@ -7,15 +7,7 @@ import (
 )
 
 type mater struct {
-	cutset []cut // only set of points where cuts can happen
-}
-
-func newMater(cs *cutset) *mater {
-	// place all cuts of various types in a same slice, effectively
-	// giving each of them the same probability to 'happen'.
-	return &mater{
-		cutset: append(append(cs.wholetris, cs.tris...), cs.colors...),
-	}
+	cuts cutset
 }
 
 func (m *mater) Mate(parent1, parent2 interface{}, nxpts int64, rng *rand.Rand) []interface{} {
@@ -24,7 +16,15 @@ func (m *mater) Mate(parent1, parent2 interface{}, nxpts int64, rng *rand.Rand) 
 	off2 := bitstring.Copy(p2)
 
 	for i := int64(0); i < nxpts; i++ {
-		cut := m.cutset[rng.Intn(len(m.cutset))] // select a cut
+		cut := cut{}
+		switch rng.Intn(3) {
+		case 0: // whole triangles
+			cut = m.cuts.wholetris[rng.Intn(len(m.cuts.wholetris))]
+		case 1: // triangle vertices
+			cut = m.cuts.tris[rng.Intn(len(m.cuts.tris))]
+		case 2: // colors (background or triangle)
+			cut = m.cuts.colors[rng.Intn(len(m.cuts.colors))]
+		}
 		bitstring.SwapRange(off1, off2, cut.index, cut.length)
 	}
 	return []interface{}{off1, off2}

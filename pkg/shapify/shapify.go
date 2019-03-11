@@ -54,7 +54,9 @@ func Shapify(cfg Config) error {
 	cuts.set(cfg)
 
 	// define the crossover
-	xover := xover.New(newMater(&cuts))
+	xover := xover.New(&mater{
+		cuts: cuts,
+	})
 	err := xover.SetPoints(3)
 	if err != nil {
 		return err
