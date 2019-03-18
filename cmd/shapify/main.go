@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"net/http"
 	_ "net/http/pprof"
@@ -42,5 +45,12 @@ func main() {
 	cfg.H = 64
 	exitIfErr(cfg.Setup(), "Invalid config file")
 	log.Printf("config: %+v", cfg)
-	exitIfErr(shapify.Shapify(cfg), "Shapify error")
+	stop, err := shapify.Shapify(cfg)
+	exitIfErr(err, "Shapify error")
+
+	var sig = make(chan os.Signal)
+	signal.Notify(sig, syscall.SIGTERM)
+	signal.Notify(sig, syscall.SIGINT)
+	fmt.Printf("caught sig: %+v\n", <-sig)
+	exitIfErr(stop(), "Shapify error")
 }

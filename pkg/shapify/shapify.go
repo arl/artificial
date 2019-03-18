@@ -3,10 +3,20 @@
 package shapify
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"math"
+	"os"
+	"path/filepath"
+	"sync"
 
+	"github.com/arl/evolve/pkg/bitstring"
+
+	"github.com/arl/evolve"
+
+	"github.com/arl/artificial/pkg/stats"
 	"github.com/arl/evolve/condition"
 	"github.com/arl/evolve/engine"
 	"github.com/arl/evolve/operator"
@@ -49,9 +59,15 @@ func (c *Config) Setup() error {
 	return nil
 }
 
+const statsSamplerSize = 200
+
 // Shapify implements a genetic algorithm evolving a population of images
 // made of colored shapes in order to match an user-provided reference image.
-func Shapify(cfg Config) error {
+func Shapify(cfg Config) (stop func() error, err error) {
+	stop = func() error { return nil }
+
+	startGUI()
+
 	// construct the cutset for crossover and mutation
 	cuts := cutset{}
 	cuts.set(cfg)
@@ -60,13 +76,13 @@ func Shapify(cfg Config) error {
 	xover := xover.New(&mater{
 		cuts: cuts,
 	})
-	err := xover.SetPoints(3)
+	err = xover.SetPoints(3)
 	if err != nil {
-		return err
+		return stop, err
 	}
 	err = xover.SetProb(0.7)
 	if err != nil {
-		return err
+		return stop, err
 	}
 
 	// define the mutation operator
@@ -80,7 +96,7 @@ func Shapify(cfg Config) error {
 	renderer := newRenderer(cfg)
 	evaluator, err := newEval(renderer, cfg)
 	if err != nil {
-		return err
+		return stop, err
 	}
 
 	epocher := engine.Generational{
@@ -91,37 +107,70 @@ func Shapify(cfg Config) error {
 	gen := &gen{cfg: cfg}
 	eng, err := engine.New(gen, evaluator, &epocher)
 	if err != nil {
-		return err
+		return stop, err
 	}
 
-	fo := &folderOutput{
+	// add evolution observers
+	dsampler := stats.NewDownsampler(statsSamplerSize)
+	eng.AddObserver(dsampler)
+
+	eng.AddObserver(&folderOutput{
 		folder:   "./work/_tmp",
 		every:    50,
 		renderer: renderer,
-	}
+		print:    true,
+	})
 
-	eng.AddObserver(fo)
-
-	bests, _, err := eng.Evolve(
-		50,               // number of individuals per generation
-		engine.Elites(2), // nth best are put directly put into next population
-		engine.EndOn(condition.TargetFitness{
-			Fitness: 0,
-			Natural: evaluator.IsNatural(),
-		}),
-	)
-
+	plotUpdater, err := stats.NewPlotUpdater(stats.DefaultPlotter, dsampler, 100,
+		func(buf bytes.Buffer, gen int) {
+			fname := fmt.Sprintf("./work/_tmp/stats-%d.%s", gen, stats.DefaultPlotter.Format)
+			f, err := os.Create(fname)
+			if err != nil {
+				log.Printf("couldn't create %s: %v", fname, err)
+			}
+			defer f.Close()
+			_, err = buf.WriteTo(f)
+			if err != nil {
+				log.Printf("couldn't write plot to %s: %v", fname, err)
+			}
+		})
 	if err != nil {
-		return err
+		return stop, err
 	}
-	fmt.Println(bests[0])
-	return nil
+	eng.AddObserver(plotUpdater)
+
+	// start evolution in a goroutine, stoppable from the caller
+	var (
+		lastpop   evolve.Population
+		userabort = condition.NewUserAbort()
+		wg        sync.WaitGroup
+	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		lastpop, _, err = eng.Evolve(
+			50,               // number of individuals per generation
+			engine.Elites(2), // the nth best are directly put into next population
+			engine.EndOn(userabort),
+		)
+	}()
+	return func() error {
+		userabort.Abort()
+		wg.Wait()
+		var samples [statsSamplerSize]evolve.PopulationStats
+		dsampler.Samples(samples[:])
+		return summary(samples[:], lastpop[0], "./work/_tmp")
+	}, nil
 }
 
-/* GO                         C
-   set_base_image      ->     load base image, check depth, size, etc, save buffer
-   generate bistring   ->     render image, diff with base, return fitness
-   next generation     ->
-
-De temps en temps, call render_bitstring, mais independement du workflow de l'algorithme génétique.
-*/
+func summary(samples []evolve.PopulationStats, best *evolve.Individual, dir string) error {
+	fmt.Println("best individual fitness ", best.Fitness)
+	fmt.Println("best individual as big int string ", best.Candidate.(*bitstring.Bitstring).BigInt().String())
+	csvpath := filepath.Join(dir, "stats.csv")
+	err := stats.SaveAsCSVFile(csvpath, samples)
+	if err != nil {
+		return fmt.Errorf("summary: %v", err)
+	}
+	log.Println("saved evolution stats summary to", csvpath)
+	return nil
+}

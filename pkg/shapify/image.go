@@ -73,6 +73,4 @@ func (r *renderer) draw(dst *image.RGBA, bs *bitstring.Bitstring) {
 	if ibit != uint(bs.Len()) {
 		panic(fmt.Sprintf("only %d/%d bits have been used", ibit, bs.Len()))
 	}
-
-	return
 }
