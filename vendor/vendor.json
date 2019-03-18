@@ -5,62 +5,62 @@
 		{
 			"checksumSHA1": "WYmkkB6BGFXSC30q+Jw3OL6Wz6E=",
 			"path": "github.com/arl/evolve",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "ZsEsMJnNUsbUXTfBmLaIyF6bkOo=",
 			"path": "github.com/arl/evolve/condition",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "p4de8b0ToIvoLBToo7XqAYE30Z4=",
 			"path": "github.com/arl/evolve/engine",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "ngDWPFVDlNgJ/H4eJ8fwTEzc2j4=",
 			"path": "github.com/arl/evolve/generator",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "vmWE4NaRsXYDvnH26/Cy54XPH1U=",
 			"path": "github.com/arl/evolve/operator",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "j2g0++dMd864s205lBqSEjRlqAE=",
 			"path": "github.com/arl/evolve/operator/mutation",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "LMao4ebMbCNlg06VajjxL0SPbbI=",
 			"path": "github.com/arl/evolve/operator/xover",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
-			"checksumSHA1": "5SZ9xnOnQOw0YV3Z7/85Jju01gM=",
+			"checksumSHA1": "rR7cCqIQ8MsoZgqEhYdCycgR6ds=",
 			"path": "github.com/arl/evolve/pkg/bitstring",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "Ooi+ejVZ+0xC9Y/ES5fPc6eGQcs=",
 			"path": "github.com/arl/evolve/pkg/mt19937",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "jlJ33Q1LPZ2FewxBeI5X8BpFg00=",
 			"path": "github.com/arl/evolve/selection",
-			"revision": "8251a60b491f7d4c440bf8bebcb0e060b38d7ddf",
-			"revisionTime": "2019-03-05T22:16:55Z"
+			"revision": "622500100f8f41b74d4655b4110f9e7ad0f619a1",
+			"revisionTime": "2019-03-17T22:32:29Z"
 		},
 		{
 			"checksumSHA1": "CSPbwbyzqA6sfORicn4HFtIhF/c=",
