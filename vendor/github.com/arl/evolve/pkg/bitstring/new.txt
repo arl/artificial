@@ -1,0 +1,220 @@
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.69 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.92 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.97 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.14 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	500000000	         3.01 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         2.90 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         2.98 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         2.95 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.92 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.73 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.41 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.55 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        26.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.54 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.19 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	36.206s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.87 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.73 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.05 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         3.07 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.05 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         3.07 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         2.95 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.76 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.75 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.42 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.55 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	50000000	        26.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       180 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.80 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.59 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	36.622s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.70 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.87 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.04 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         3.04 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	500000000	         2.95 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         3.07 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	500000000	         2.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.89 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.41 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.56 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        24.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       181 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.44 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.22 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	34.827s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.73 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.70 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.98 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	1000000000	         3.05 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         3.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         2.88 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	500000000	         3.14 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	1000000000	         3.11 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.74 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.75 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.41 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.54 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        25.3 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       180 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.46 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.55 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	39.157s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.91 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.96 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.93 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.18 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         2.89 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         2.88 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         3.09 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         2.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.88 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.88 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.43 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	50000000	        25.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.5 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.45 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.11 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	36.417s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.79 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.71 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.21 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         3.01 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         2.88 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         3.10 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	1000000000	         3.10 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.72 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.86 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.43 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        24.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        12.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.80 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.62 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	39.203s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.86 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.67 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.97 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	1000000000	         3.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         2.86 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         2.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	1000000000	         2.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.75 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.77 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.41 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.56 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        24.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.75 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.61 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	40.469s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.90 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.85 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.93 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	1000000000	         3.02 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         3.00 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.00 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	500000000	         3.12 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         3.08 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.77 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.75 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.42 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.55 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	100000000	        25.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.67 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.52 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	37.724s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.65 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.71 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.93 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	500000000	         3.21 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         2.98 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.02 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	500000000	         2.95 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         3.10 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.75 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.73 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.40 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.56 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	50000000	        24.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.1 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.50 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.53 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	34.742s
+goos: linux
+goarch: amd64
+pkg: github.com/arl/evolve/pkg/bitstring
+BenchmarkUintnSameWord-8          	300000000	         4.87 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUintnDifferentWords-8    	300000000	         4.73 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64SameWord-8         	2000000000	         0.97 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint64DifferentWords-8   	1000000000	         3.19 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32SameWord-8         	1000000000	         2.87 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint32DifferentWords-8   	1000000000	         3.02 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16SameWord-8         	1000000000	         3.08 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint16DifferentWords-8   	500000000	         3.11 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8SameWord-8          	1000000000	         2.72 ns/op	       0 B/op	       0 allocs/op
+BenchmarkUint8DifferentWords-8    	1000000000	         2.74 ns/op	       0 B/op	       0 allocs/op
+Benchmark_genmask-8               	2000000000	         0.41 ns/op	       0 B/op	       0 allocs/op
+Benchmark_lomask-8                	2000000000	         0.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSwapRange-8              	50000000	        24.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRandom-8                 	10000000	       179 ns/op	     176 B/op	       2 allocs/op
+BenchmarkEquals-8                 	100000000	        13.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUint8-8               	200000000	         6.44 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSetUintn-8               	200000000	         7.19 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/arl/evolve/pkg/bitstring	37.790s
