@@ -164,13 +164,29 @@ func Shapify(cfg Config) (stop func() error, err error) {
 }
 
 func summary(samples []evolve.PopulationStats, best *evolve.Individual, dir string) error {
+	// print information about best individual
 	fmt.Println("best individual fitness ", best.Fitness)
 	fmt.Println("best individual as big int string ", best.Candidate.(*bitstring.Bitstring).BigInt().String())
+
+	// save evolution stats as csv
 	csvpath := filepath.Join(dir, "stats.csv")
 	err := stats.SaveAsCSVFile(csvpath, samples)
 	if err != nil {
 		return fmt.Errorf("summary: %v", err)
 	}
-	log.Println("saved evolution stats summary to", csvpath)
+	fmt.Println("summary: saved evolution stats to", csvpath)
+
+	// save plot evolution stats
+	plotpath := fmt.Sprintf("./work/_tmp/stats.%s", stats.DefaultPlotter.Format)
+	f, err := os.Create(plotpath)
+	if err != nil {
+		return fmt.Errorf("summary: %v", err)
+	}
+	defer f.Close()
+	err = stats.DefaultPlotter.WritePlot(f, samples)
+	if err != nil {
+		return fmt.Errorf("summary: %v", err)
+	}
+	fmt.Println("summary: saved evolution stats plot to", plotpath)
 	return nil
 }
