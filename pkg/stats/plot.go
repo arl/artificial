@@ -26,7 +26,7 @@ var DefaultPlotter = Plotter{
 	Title:  "Shapify Evolution Plot",
 	W:      16 / 2 * vg.Inch,
 	H:      9 / 2 * vg.Inch,
-	Format: "png",
+	Format: "svg",
 }
 
 func (pl Plotter) draw(samples []evolve.PopulationStats) (*plot.Plot, error) {
