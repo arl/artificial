@@ -27,6 +27,7 @@ func exitIfErr(err error, format string, args ...string) {
 
 func main() {
 	go func() {
+		fmt.Println("listening on localhost:6060")
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
 

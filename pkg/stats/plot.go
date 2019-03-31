@@ -49,7 +49,6 @@ func (pl Plotter) draw(samples []evolve.PopulationStats) (*plot.Plot, error) {
 		mean[i].Y = sample.Mean
 		stddev[i].Y = sample.StdDev
 	}
-	fmt.Println("len samplmes", len(samples))
 
 	p.Title.Text = pl.Title
 	p.X.Label.Text = "Generation"

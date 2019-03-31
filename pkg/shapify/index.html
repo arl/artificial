@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>Shapify</title>
+		<script type="test/javascript" src="./js/fancy_websocket.js" /></script>
+		<script type="text/javascript">
+		var sock = null;
+		function updatePlot(svgData) {
+			var plot = document.getElementById("evolution-plot");
+			plot.innerHTML = svgData;
+		};
+		function updateImage(pngData) {
+			var image = document.getElementById("best-image");
+			image.src = "data:image/jpeg;base64," + pngData;
+		};
+		window.onload = function() {
+			sock = new WebSocket("ws://"+location.host+"/data");
+			console.log("new websocket on: ws://"+location.host+"/data");
+			sock.onmessage = function(event) {
+				var data = JSON.parse(event.data);				
+				switch (data.type) {
+					case "image":
+						updateImage(data.image);
+						break
+					case "plot":
+						updatePlot(data.plot);
+						break
+				};
+			};
+		};
+		</script>
+		<style>
+		.image-style {
+			width: 256px;
+			height: 256px;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<h2>Best individual</h2>
+		</div>
+		<div id="content">
+			<div id="evolution-plot"></div>
+			<img id="best-image" class="image-style"></img>
+		</div>
+	</body>
+</html>

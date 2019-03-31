@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"os"
 	"path/filepath"
@@ -66,8 +65,6 @@ const statsSamplerSize = 200
 func Shapify(cfg Config) (stop func() error, err error) {
 	stop = func() error { return nil }
 
-	startGUI()
-
 	// construct the cutset for crossover and mutation
 	cuts := cutset{}
 	cuts.set(cfg)
@@ -114,30 +111,39 @@ func Shapify(cfg Config) (stop func() error, err error) {
 	dsampler := stats.NewDownsampler(statsSamplerSize)
 	eng.AddObserver(dsampler)
 
-	eng.AddObserver(&folderOutput{
-		folder:   "./work/_tmp",
-		every:    50,
-		renderer: renderer,
-		print:    true,
-	})
+	plotsc := make(chan []byte)
+	imagesc := make(chan []byte)
 
 	plotUpdater, err := stats.NewPlotUpdater(stats.DefaultPlotter, dsampler, 100,
 		func(buf bytes.Buffer, gen int) {
-			fname := fmt.Sprintf("./work/_tmp/stats-%d.%s", gen, stats.DefaultPlotter.Format)
-			f, err := os.Create(fname)
-			if err != nil {
-				log.Printf("couldn't create %s: %v", fname, err)
-			}
-			defer f.Close()
-			_, err = buf.WriteTo(f)
-			if err != nil {
-				log.Printf("couldn't write plot to %s: %v", fname, err)
+			select {
+			case plotsc <- buf.Bytes():
+			default:
 			}
 		})
 	if err != nil {
 		return stop, err
 	}
 	eng.AddObserver(plotUpdater)
+
+	imgout := &imageOutput{
+		every:    50,
+		renderer: renderer,
+		format:   "png",
+		imagecb: func(buf []byte) {
+			select {
+			case imagesc <- buf:
+			default:
+			}
+		},
+	}
+	eng.AddObserver(imgout)
+
+	gui, err := newGUI()
+	if err != nil {
+		return stop, err
+	}
+	gui.start(plotsc, imagesc)
 
 	// start evolution in a goroutine, stoppable from the caller
 	var (
