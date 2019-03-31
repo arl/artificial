@@ -3,6 +3,12 @@
 	"ignore": "test github.com/arl/work/",
 	"package": [
 		{
+			"checksumSHA1": "QPifSf/PVjj8iwDLL1+Ua8NFxSw=",
+			"path": "github.com/ajstarks/svgo",
+			"revision": "6ce6a3bcf6cde6c5007887677ebd148ec30f42a4",
+			"revisionTime": "2018-10-06T00:33:13Z"
+		},
+		{
 			"checksumSHA1": "W3k8bSmk/cq+OwAiNmW5WDzPYB0=",
 			"path": "github.com/arl/evolve",
 			"revision": "508758566d9e2c9a1d1e2e51077bd7bdeea000a2",
@@ -261,6 +267,12 @@
 			"revisionTime": "2018-11-15T22:27:58Z"
 		},
 		{
+			"checksumSHA1": "nvtLDoG3eBuFIcd1TGEylVUmEUk=",
+			"path": "golang.org/x/image/tiff",
+			"revision": "0694c2d4d067f97ebef574d63a763ee8ab559da7",
+			"revisionTime": "2019-01-25T10:41:42Z"
+		},
+		{
 			"checksumSHA1": "NJC3ueV1c+qbGqS8dPByINMxFPI=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "b4a75ba826a64a70990f11a225237acd6ef35c9f",
@@ -277,6 +289,78 @@
 			"path": "golang.org/x/text/unicode/norm",
 			"revision": "e6919f6577db79269a6443b9dc46d18f2238fb5d",
 			"revisionTime": "2018-12-15T12:10:58Z"
+		},
+		{
+			"checksumSHA1": "v4/Ru0/J0nF9X/nlj5K4mdlb4js=",
+			"path": "gonum.org/v1/plot",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "YAGZ2DKiIMpOMH6zYIX1w6F5zY8=",
+			"path": "gonum.org/v1/plot/palette",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "ghq1m2Tkm3boMsH08ASWnydKKlk=",
+			"path": "gonum.org/v1/plot/plotter",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "q0l/s6Y7GkmUuRlmTEa/boBWqWM=",
+			"path": "gonum.org/v1/plot/plotutil",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "DPO/od9IBO/HScxWPh3s4a8CCEU=",
+			"path": "gonum.org/v1/plot/tools/bezier",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "eu36V6ZHl1NEUSI5EJ+7rUZV2ng=",
+			"path": "gonum.org/v1/plot/vg",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "0nDyaUuRGCfw8VOmBpeyDXk5LxM=",
+			"path": "gonum.org/v1/plot/vg/draw",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "wb+hRdFZX59nRHoEy4CNnABvxzk=",
+			"path": "gonum.org/v1/plot/vg/fonts",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "Sau48AYYHwcy9mam2gW2HjNLM8o=",
+			"path": "gonum.org/v1/plot/vg/vgeps",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "xO/TOHkLmhXNMgYx9y4W4SHWCbI=",
+			"path": "gonum.org/v1/plot/vg/vgimg",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "A981NY0Ninovst8/Bd4+97Y3OIs=",
+			"path": "gonum.org/v1/plot/vg/vgpdf",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
+		},
+		{
+			"checksumSHA1": "jfWRckEehQjQOz7DLqtX7cb6KMI=",
+			"path": "gonum.org/v1/plot/vg/vgsvg",
+			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
+			"revisionTime": "2019-03-12T08:00:28Z"
 		},
 		{
 			"checksumSHA1": "QqDq2x8XOU7IoOR98Cx1eiV5QY8=",
