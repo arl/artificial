@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"io"
 	"math"
+	"strings"
 
 	"github.com/golang/freetype/raster"
 	"golang.org/x/image/draw"
@@ -66,6 +67,7 @@ type Context struct {
 	current       Point
 	hasCurrent    bool
 	dashes        []float64
+	dashOffset    float64
 	lineWidth     float64
 	lineCap       LineCap
 	lineJoin      LineJoin
@@ -109,6 +111,15 @@ func NewContextForRGBA(im *image.RGBA) *Context {
 	}
 }
 
+// GetCurrentPoint will return the current point and if there is a current point.
+// The point will have been transformed by the context's transformation matrix.
+func (dc *Context) GetCurrentPoint() (Point, bool) {
+	if dc.hasCurrent {
+		return dc.current, true
+	}
+	return Point{}, false
+}
+
 // Image returns the image that has been drawn by this context.
 func (dc *Context) Image() image.Image {
 	return dc.im
@@ -139,6 +150,12 @@ func (dc *Context) EncodePNG(w io.Writer) error {
 // alternating on and off lengths.
 func (dc *Context) SetDash(dashes ...float64) {
 	dc.dashes = dashes
+}
+
+// SetDashOffset sets the initial offset into the dash pattern to use when
+// stroking dashed paths.
+func (dc *Context) SetDashOffset(offset float64) {
+	dc.dashOffset = offset
 }
 
 func (dc *Context) SetLineWidth(lineWidth float64) {
@@ -379,7 +396,7 @@ func (dc *Context) joiner() raster.Joiner {
 func (dc *Context) stroke(painter raster.Painter) {
 	path := dc.strokePath
 	if len(dc.dashes) > 0 {
-		path = dashed(path, dc.dashes)
+		path = dashed(path, dc.dashes, dc.dashOffset)
 	} else {
 		// TODO: this is a temporary workaround to remove tiny segments
 		// that result in rendering issues
@@ -496,6 +513,18 @@ func (dc *Context) AsMask() *image.Alpha {
 	return mask
 }
 
+// InvertMask inverts the alpha values in the current clipping mask such that
+// a fully transparent region becomes fully opaque and vice versa.
+func (dc *Context) InvertMask() {
+	if dc.mask == nil {
+		dc.mask = image.NewAlpha(dc.im.Bounds())
+	} else {
+		for i, a := range dc.mask.Pix {
+			dc.mask.Pix[i] = 255 - a
+		}
+	}
+}
+
 // Clip updates the clipping region by intersecting the current
 // clipping region with the current path as it would be filled by dc.Fill().
 // The path is cleared after this operation.
@@ -572,8 +601,8 @@ func (dc *Context) DrawEllipticalArc(x, y, rx, ry, angle1, angle2 float64) {
 		a2 := angle1 + (angle2-angle1)*p2
 		x0 := x + rx*math.Cos(a1)
 		y0 := y + ry*math.Sin(a1)
-		x1 := x + rx*math.Cos(a1+(a2-a1)/2)
-		y1 := y + ry*math.Sin(a1+(a2-a1)/2)
+		x1 := x + rx*math.Cos((a1+a2)/2)
+		y1 := y + ry*math.Sin((a1+a2)/2)
 		x2 := x + rx*math.Cos(a2)
 		y2 := y + ry*math.Sin(a2)
 		cx := 2*x1 - x0/2 - x2/2
@@ -725,8 +754,11 @@ func (dc *Context) DrawStringAnchored(s string, x, y, ax, ay float64) {
 // spacing and text alignment.
 func (dc *Context) DrawStringWrapped(s string, x, y, ax, ay, width, lineSpacing float64, align Align) {
 	lines := dc.WordWrap(s, width)
+
+	// sync h formula with MeasureMultilineString
 	h := float64(len(lines)) * dc.fontHeight * lineSpacing
 	h -= (lineSpacing - 1) * dc.fontHeight
+
 	x -= ax * width
 	y -= ay * h
 	switch align {
@@ -744,6 +776,29 @@ func (dc *Context) DrawStringWrapped(s string, x, y, ax, ay, width, lineSpacing 
 		dc.DrawStringAnchored(line, x, y, ax, ay)
 		y += dc.fontHeight * lineSpacing
 	}
+}
+
+func (dc *Context) MeasureMultilineString(s string, lineSpacing float64) (width, height float64) {
+	lines := strings.Split(s, "\n")
+
+	// sync h formula with DrawStringWrapped
+	height = float64(len(lines)) * dc.fontHeight * lineSpacing
+	height -= (lineSpacing - 1) * dc.fontHeight
+
+	d := &font.Drawer{
+		Face: dc.fontFace,
+	}
+
+	// max width from lines
+	for _, line := range lines {
+		adv := d.MeasureString(line)
+		currentWidth := float64(adv >> 6) // from gg.Context.MeasureString
+		if currentWidth > width {
+			width = currentWidth
+		}
+	}
+
+	return width, height
 }
 
 // MeasureString returns the rendered width and height of the specified text

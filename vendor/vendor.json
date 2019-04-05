@@ -75,10 +75,10 @@
 			"revisionTime": "2018-02-21T22:46:20Z"
 		},
 		{
-			"checksumSHA1": "2sV/5rdZtNQqAm2PJSIy7AilidI=",
+			"checksumSHA1": "3l1Azz131IKlFvojJc/kWllHnAQ=",
 			"path": "github.com/fogleman/gg",
-			"revision": "0e0ff3ade7039063fe954cc1b45fad6cd4ac80db",
-			"revisionTime": "2018-08-23T01:57:45Z"
+			"revision": "0403632d5b905943a1c2a5b2763aaecd568467ec",
+			"revisionTime": "2019-02-20T22:12:49Z"
 		},
 		{
 			"checksumSHA1": "7NP1qUMF8Kx1y0zANxx0e+oq9Oo=",
@@ -303,7 +303,7 @@
 			"revisionTime": "2019-03-12T08:00:28Z"
 		},
 		{
-			"checksumSHA1": "ghq1m2Tkm3boMsH08ASWnydKKlk=",
+			"checksumSHA1": "TILG5QOWPm6t6o+xmHNlC22KtH8=",
 			"path": "gonum.org/v1/plot/plotter",
 			"revision": "cd8a2043e414f6c72976b36774ef3719c8c0963c",
 			"revisionTime": "2019-03-12T08:00:28Z"
