@@ -52,17 +52,20 @@ func diff(img1, img2 *image.RGBA) float64 {
 		diff int64
 	)
 
+	var off int
 	for y := 0; y < h; y++ {
+		off = y * img1.Stride
 		for x := 0; x < w; x++ {
-			c1 := img1.RGBAAt(x, y)
-			c2 := img2.RGBAAt(x, y)
+			s1 := img1.Pix[off : off+4 : off+4] // Small cap improves performance, see https://golang.org/issue/27857
+			s2 := img2.Pix[off : off+4 : off+4]
 
-			rd := abs(int64(c1.R) - int64(c2.R))
-			gd := abs(int64(c1.G) - int64(c2.G))
-			bd := abs(int64(c1.B) - int64(c2.B))
+			rd := abs(int64(s1[0]) - int64(s2[0]))
+			gd := abs(int64(s1[1]) - int64(s2[1]))
+			bd := abs(int64(s1[2]) - int64(s2[2]))
 
 			// sum of squared differences
 			diff += rd*rd + gd*gd + bd*bd
+			off += 4
 		}
 	}
 	return float64(diff)
