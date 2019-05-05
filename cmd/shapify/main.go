@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -9,8 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 
 	"github.com/arl/artificial/pkg/shapify"
 )
@@ -25,33 +26,38 @@ func exitIfErr(err error, format string, args ...string) {
 	log.Fatalf("%s: %s", fmt.Sprintf(format, args), err)
 }
 
-func main() {
-	go func() {
-		fmt.Println("listening on localhost:6060")
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
-
-	// port := pflag.String("port", "8080", "web gui server port")
-	pflag.String("baseimage", "", "base image")
-	pflag.Parse()
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	exitIfErr(viper.ReadInConfig(), "Error reading config file")
-	viper.BindPFlags(pflag.CommandLine)
+func readConfig(name string) shapify.Config {
+	buf, err := ioutil.ReadFile(name)
+	exitIfErr(err, "can't read configuration file '%s'", name)
 
 	var cfg shapify.Config
-	exitIfErr(viper.Unmarshal(&cfg), "Unable to unmarshal config")
+	err = yaml.Unmarshal(buf, &cfg)
+	exitIfErr(err, "can't decode configuration")
 
-	cfg.W = 64
-	cfg.H = 64
-	exitIfErr(cfg.Setup(), "Invalid config file")
 	log.Printf("config: %+v", cfg)
-	stop, err := shapify.Shapify(cfg)
-	exitIfErr(err, "Shapify error")
+	exitIfErr(cfg.Setup(), "invalid shapify configuration file")
+	return cfg
+}
+
+func main() {
+	addr := "localhost:6061"
+	cfgf := "./shapify.cfg"
+	flag.StringVar(&addr, "addr", addr, "web gui http address")
+	flag.StringVar(&cfgf, "cfg", cfgf, "shapify configuration file")
+	flag.Parse()
+
+	// start web gui server
+	go func() {
+		fmt.Println("listening on", addr)
+		log.Fatalln(http.ListenAndServe(addr, nil))
+	}()
+
+	stop, err := shapify.Shapify(readConfig(cfgf))
+	exitIfErr(err, "shapify error")
 
 	var sig = make(chan os.Signal)
 	signal.Notify(sig, syscall.SIGTERM)
 	signal.Notify(sig, syscall.SIGINT)
-	fmt.Printf("caught sig: %+v\n", <-sig)
-	exitIfErr(stop(), "Shapify error")
+	fmt.Printf("caught signal: %+v\n", <-sig)
+	exitIfErr(stop(), "shapify error")
 }

@@ -1,2 +1,10 @@
+# number of triangles
 ntris: 40
-base: "./joconde-bleue.png"
+
+# original image
+baseimage: "./joconde-bleue.png"
+
+# scaled down dimensions (working canvas dimensions)
+# note: must be power of 2
+w: 64
+h: 64
