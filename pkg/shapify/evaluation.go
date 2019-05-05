@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"image"
 
-	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/fogleman/gg"
+
+	"github.com/arl/evolve/pkg/bitstring"
 )
 
 type eval struct {

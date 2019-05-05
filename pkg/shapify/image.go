@@ -5,8 +5,9 @@ import (
 	"image"
 	"sync"
 
-	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/fogleman/gg"
+
+	"github.com/arl/evolve/pkg/bitstring"
 )
 
 func loadPNGRGBA(path string) (*image.RGBA, error) {

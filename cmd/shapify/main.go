@@ -3,16 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"net/http"
-	_ "net/http/pprof"
-
-	"github.com/arl/artificial/pkg/shapify"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+
+	"github.com/arl/artificial/pkg/shapify"
 )
 
 func exitIfErr(err error, format string, args ...string) {

@@ -11,15 +11,14 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/arl/evolve/pkg/bitstring"
+	"github.com/arl/artificial/pkg/stats"
 
 	"github.com/arl/evolve"
-
-	"github.com/arl/artificial/pkg/stats"
 	"github.com/arl/evolve/condition"
 	"github.com/arl/evolve/engine"
 	"github.com/arl/evolve/operator"
 	"github.com/arl/evolve/operator/xover"
+	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/arl/evolve/selection"
 )
 

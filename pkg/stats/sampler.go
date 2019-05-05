@@ -35,7 +35,7 @@ func (sb *Downsampler) addSample(stats *evolve.PopulationStats) {
 	if sb.n == sb.invres*cap(sb.buf) {
 		sb.decimate()
 	}
-	// only keep 1 sample out of 'invres', discard the rest.
+	// keep 1 sample every 'invres', discard the rest.
 	if sb.n%sb.invres == 0 {
 		sb.buf = append(sb.buf, *stats)
 	}

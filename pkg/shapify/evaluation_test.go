@@ -11,8 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/arl/evolve/pkg/bitstring"
 	"github.com/stretchr/testify/require"
+
+	"github.com/arl/evolve/pkg/bitstring"
 )
 
 var update = flag.Bool("update", false, "update .golden files")
