@@ -7,10 +7,11 @@ import (
 )
 
 type mutation struct {
-	pwholecolor float32 // probability to mutate a whole triangle
-	ptriangle   float32 // probability to mutate triangle vertices
-	pcolor      float32 // probability to a triangle color
-	cuts        cutset
+	pwholetri float32 // probability to mutate a whole triangle (color included)
+	ptriangle float32 // probability to mutate triangle vertices
+	pcolor    float32 // probability to mutate a triangle color
+	palpha    float32 // probability to mutate a triangle alpha channel
+	cuts      cutset
 }
 
 func (m *mutation) Apply(sel []interface{}, rng *rand.Rand) []interface{} {
@@ -18,7 +19,7 @@ func (m *mutation) Apply(sel []interface{}, rng *rand.Rand) []interface{} {
 	copy(mutpop, sel)
 	for i := range mutpop {
 		bs := mutpop[i].(*bitstring.Bitstring)
-		if rng.Float32() < m.pwholecolor {
+		if rng.Float32() < m.pwholetri {
 			cut := m.cuts.wholetris[rng.Intn(len(m.cuts.wholetris))]
 			bs.FlipBit(cut.index + uint(rng.Intn(int(cut.length-1))))
 		}
@@ -28,6 +29,10 @@ func (m *mutation) Apply(sel []interface{}, rng *rand.Rand) []interface{} {
 		}
 		if rng.Float32() < m.pcolor {
 			cut := m.cuts.colors[rng.Intn(len(m.cuts.colors))]
+			bs.FlipBit(cut.index + uint(rng.Intn(int(cut.length-1))))
+		}
+		if rng.Float32() < m.palpha {
+			cut := m.cuts.alpha[rng.Intn(len(m.cuts.alpha))]
 			bs.FlipBit(cut.index + uint(rng.Intn(int(cut.length-1))))
 		}
 	}

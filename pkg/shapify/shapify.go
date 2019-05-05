@@ -84,10 +84,11 @@ func Shapify(cfg Config) (stop func() error, err error) {
 
 	// define the mutation operator
 	mut := &mutation{
-		pwholecolor: 0.01,
-		ptriangle:   0.02,
-		pcolor:      0.02,
-		cuts:        cuts,
+		pwholetri: 0.01,
+		ptriangle: 0.02,
+		pcolor:    0.02,
+		palpha:    0.01,
+		cuts:      cuts,
 	}
 
 	renderer := newRenderer(cfg)
