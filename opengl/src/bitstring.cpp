@@ -1,0 +1,166 @@
+#include "bitstring.hpp"
+#include "bitops.h"
+
+#include <cstdio>
+#include <cstring>
+#include <cassert>
+#include <cstdlib>
+#include <cmath>
+#include <algorithm>
+#include <iostream>
+#include <stdexcept>
+
+bitstring::bitstring(size_t length) {
+	this->_length = length;
+	this->_ndata = (this->_length + maxbits - 1) / maxbits;
+	this->_data = new size_t[this->_ndata];
+	memset(&this->_data[0], 0, sizeof(size_t) * this->_ndata);
+}
+
+bitstring::bitstring(const bitstring & other) {
+	this->_length = other._length;
+	this->_ndata = other._ndata;
+	this->_data = new size_t[this->_ndata];
+	memcpy(this->_data, other._data, sizeof(size_t) * this->_ndata);
+}
+
+bitstring::bitstring(const char * s) : bitstring(strlen(s)) {
+	for (size_t i = 0; i < this->_length; ++i){
+		switch (s[i]) {
+		case '0':
+			break;
+		case '1':
+			this->setbit(this->_length - i - 1);
+			break;
+		default:
+			throw(std::invalid_argument("illegal character"));
+		}
+	}
+}
+
+bitstring::~bitstring() {
+	delete(this->_data);
+	this->_data = nullptr;
+	this->_length = 0;
+	this->_ndata = 0;
+}
+
+size_t bitstring::length() const {
+	return this->_length;
+}
+
+void bitstring::string(char * s) const {
+	for (size_t i = 0; i < this->_length; ++i)
+		s[this->_length-1-i] = this->bit(i) ? '1' : '0';
+	s[this->_length] = '\0';
+}
+
+std::string bitstring::string() const {
+	char buf[this->_length];
+	this->string(buf);
+	return std::string(buf);
+}
+
+// Crashes if i is not a valid bit index for bs, that is if i is
+// greater than bs.length.
+void bitstring::_bit_must_exist(size_t i) const {
+	#ifdef DEBUG
+	if (i >= this->_length) {
+		throw std::invalid_argument("bitstring index out of range");
+	}
+	#endif
+}
+
+void bitstring::print_hex() const {
+	for (size_t i = 0; i < this->_ndata; ++i) {
+		std::cout << std::hex << this->_data[i];
+	}
+	std::cout << std::endl;
+}
+
+void bitstring::setbit(size_t i) {
+	this->_bit_must_exist(i);
+
+	size_t w = _wordoffset(i);
+	size_t off = _bitoffset(i);
+	this->_data[w] |= _bitmask(off);
+}
+
+bool bitstring::bit(size_t i) const {
+	this->_bit_must_exist(i);
+
+	size_t w = _wordoffset(i);
+	size_t off = _bitoffset(i);
+	size_t mask = _bitmask(off);
+	return (this->_data[w] & mask) != 0;
+}
+
+void bitstring::clearbit(size_t i) {
+	this->_bit_must_exist(i);
+
+	size_t w = _wordoffset(i);
+	size_t off = _bitoffset(i);
+	this->_data[w] &= ~_bitmask(off);
+}
+
+void bitstring::flipbit(uint64_t i) {
+	this->_bit_must_exist(i);
+
+	uint64_t w = _wordoffset(i);
+	uint64_t off = _bitoffset(i);
+	this->_data[w] ^= _bitmask(off);
+}
+
+size_t bitstring::count_ones() const {
+	size_t n = 0;
+	for (size_t i = 0; i < this->_ndata; ++i) {
+		size_t x = this->_data[i];
+		while (x != 0) {
+			x &= (x - 1);	// unset the LSB
+			++n;      		// count how many time we need to unset a bit before zeroing x.
+		}
+	}
+	return n;
+}
+
+size_t bitstring::count_zeroes() const {
+	return this->_length - this->count_ones();
+}
+
+void bitstring::swap_ranges(bitstring& bs1, bitstring& bs2, size_t start, size_t length) {
+	bs1._bit_must_exist(start + length - 1);
+	bs2._bit_must_exist(start + length - 1);
+
+	// swap the required bits of the first word
+	size_t i = start / maxbits;
+	start = _bitoffset(start);
+	size_t end = std::min(start+length, maxbits);
+	size_t remain = length - (end - start);
+	bitstring::_swap_bits(bs1, bs2, i, _genmask(start, end));
+	i++;
+
+	// swap whole words but the last one
+	while (remain > maxbits) {
+		std::swap(bs1._data[i], bs2._data[i]);
+		remain -= maxbits;
+		++i;
+	}
+
+	// swap the remaining bits of the last word
+	if (remain != 0) {
+		bitstring::_swap_bits(bs1, bs2, i, _genlomask(remain));
+	}
+}
+
+// swapBits swaps range of bits from one word to another.
+// w is the index of the word containing the bits to swap, and m is a mask that specifies
+// whilch bits of that word will be swapped.
+void bitstring::_swap_bits(bitstring &x, bitstring &y, size_t w, size_t mask) {
+	size_t keep = ~mask;
+	size_t xkeep = x._data[w]&keep;
+	size_t ykeep = y._data[w]&keep;
+	size_t xswap = x._data[w]&mask;
+	size_t yswap = y._data[w]&mask;
+	x._data[w] = xkeep | yswap;
+	y._data[w] = ykeep | xswap;
+}
