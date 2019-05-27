@@ -4,6 +4,12 @@
 #include <string>
 #include <cstdint>
 
+#ifdef DEBUG
+# define _bitcheck_ noexcept(false)
+#else
+# define _bitcheck_
+#endif
+
 class bitstring {
     private:
         size_t _length;  // length in bits of the bit string
@@ -43,9 +49,10 @@ class bitstring {
 
         // Swaps the same range of bits between 2 bitstrings.
         //
-        // Both Bitstring may have different length the bit with index start+lenght must
-        // be valid on both or SwapRange will panic.
-        static void swap_ranges(bitstring& bs1, bitstring& bs2, size_t start, size_t length);
+        // bs1 and bs2 may have different length but if the bit at offset index
+        // 'start + lenght' must be valid on both bs1 and bs2, or it will throw
+        // an expcetion (in debug build) or behaviour is undefined..
+        static void swap_ranges(bitstring& bs1, bitstring& bs2, size_t start, size_t length) _bitcheck_;
 
         // Writes a 0 and 1 string representation of the bitstring in s.
         // The behaviour is undefined is the length of s is lower than the 
@@ -58,12 +65,13 @@ class bitstring {
         void print_hex() const;
 
         // Returns the n bits unsigned integer value represented by the n bits
-        // starting at the bit index i. It panics if there aren't enough bits in bs or
-        // if n is greater than the size of a machine word.
-        size_t uintn(size_t i, size_t n) const;
+        // starting at offset i. In debug builds it throws an exception
+        // if there aren't enough bits or if n is greater than the number of
+        // bits in size_t (machine word).
+        size_t uintn(size_t i, size_t n) const _bitcheck_;
 
     private:
-        void _bit_must_exist(size_t i) const;
+        void _bit_must_exist(size_t i) const _bitcheck_;
 
         // swaps range of bits from one word to another.
         // w is the index of the word containing the bits to swap, and m is a mask that specifies
