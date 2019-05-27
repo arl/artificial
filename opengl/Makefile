@@ -1,7 +1,12 @@
 CC=gcc
 CXX=g++
 BASE_CFLAGS=-Iinclude -I$(GLFW_ROOT)/include
-CFLAGS=-Wall -ggdb -O3 $(BASE_CFLAGS)
+
+ifndef DEBUG
+	CFLAGS=-Wall -ggdb -g3 -DDEBUG $(BASE_CFLAGS)
+else
+	CFLAGS=-Wall -ggdb -O3 $(BASE_CFLAGS)
+endif
 LDFLAGS=-L$(GLFW_ROOT)/lib -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lXinerama -lXxf86vm -lXcursor
 GLFW_ROOT=/usr/local#  glfw install directory
 
