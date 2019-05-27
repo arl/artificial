@@ -185,3 +185,21 @@ size_t bitstring::uintn(size_t i, size_t n) const {
 	loword = _genhimask(looff) & loword >> looff;
 	return loword | hiword<<(maxbits-looff);
 }
+
+uint16_t bitstring::uint16(size_t i) const _bitcheck_ {
+	this->_bit_must_exist(i + 15);
+
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[_wordoffset(i)] >> off;
+	size_t hiword = this->_data[_wordoffset(i+15)] & ((1 << off) - 1);
+	return uint16_t(loword | hiword<<(maxbits-off));
+}
+
+uint8_t bitstring::uint8(size_t i) const _bitcheck_ {
+	this->_bit_must_exist(i + 7);
+
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[_wordoffset(i)] >> off;
+	size_t hiword = this->_data[_wordoffset(i+7)] & ((1 << off) - 1);
+	return uint8_t(loword | hiword<<(maxbits-off));
+}

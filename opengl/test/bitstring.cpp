@@ -197,7 +197,6 @@ TEST_CASE("swap ranges from 2 bitstrings", "[bitstring]") {
 	}
 }
 
-
 TEST_CASE("convert bits to uintn", "[bitstring]") {
 	struct {
 		std::string input;
@@ -242,6 +241,90 @@ TEST_CASE("convert bits to uintn", "[bitstring]") {
 		INFO("\n<test case>\n"
 		   <<"\ninput:" << tt->input
 		   <<"\ni:" << tt->i << " nbits:" << tt->nbits
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to uint16_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		uint16_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 9> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "00000000000000000000000000000001",
+			i: 0, want: 1},
+		{input: "00000000000000000000000000000010",
+			i: 0, want: 2},
+		{input: "00000000000000000100000000000010",
+			i: 0, want: uint16_t(1<<14) + 2},
+		{input: "11111111111111110100000000000010",
+			i: 0, want: uint16_t(1<<14) + 2},
+		{input: "0000000000000000000000000000000111111111111111111111111111111111",
+			i: 32, want: 1},
+		{input: "0000000000000000100000000000000111111111111111111111111111111111",
+			i: 32, want: uint16_t(1<<15) + 1},
+		{input: "10000000000000000",
+			i: 1, want: uint16_t(1<<15)},
+
+		// LSB and MSB are on 2 separate words
+		{input: "111111111111111111111110100000000000010111111111111111111111111",
+			i: 24, want: uint16_t(1<<14) + 2},
+		{input: "000000000000000000000001111111111111110000000000000000000000000",
+			i: 24, want: std::numeric_limits<uint16_t>::max() - 1},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		uint16_t got = bs.uint16(tt->i);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to uint8_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		uint8_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 9> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "00000000000000000000000000000001",
+			i: 0, want: 1},
+		{input: "00000000000000000000000000000010",
+			i: 0, want: 2},
+		{input: "000000000000000001000010",
+			i: 0, want: uint8_t(1<<6) + 2},
+		{input: "111111111111111101000010",
+			i: 0, want: uint8_t(1<<6) + 2},
+		{input: "0000000000000000000000000000000111111111111111111111111111111111",
+			i: 32, want: 1},
+		{input: "00000000000000001000000111111111111111111111111111111111",
+			i: 32, want: uint8_t(1<<7) + 1},
+		{input: "100000000",
+			i: 1, want: uint8_t(1 << 7)},
+
+		// LSB and MSB are on separate words
+		{input: "11111111111111111111111010000101111111111111111111111111111111",
+			i: 31, want: uint8_t(1<<6) + 2},
+		{input: "00000000000000000000000111111100000000000000000000000000000000",
+			i: 31, want: std::numeric_limits<uint8_t>::max() - 1},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		uint8_t got = bs.uint8(tt->i);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
 		   <<"\nwant:" << tt->want);
 	}
 }
