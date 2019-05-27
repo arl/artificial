@@ -164,3 +164,24 @@ void bitstring::_swap_bits(bitstring &x, bitstring &y, size_t w, size_t mask) {
 	x._data[w] = xkeep | yswap;
 	y._data[w] = ykeep | xswap;
 }
+
+size_t bitstring::uintn(size_t i, size_t n) const {
+	#ifdef DEBUG
+	if ((n > maxbits) || (n == 0)) {		
+		throw std::invalid_argument("uintn supports unsigned integers from 1 to 'word size' bits long");
+	}
+	#endif //DEBUG
+	this->_bit_must_exist(i + n - 1);
+
+	size_t j = _wordoffset(i);
+	size_t k = _wordoffset(i + n - 1);
+	size_t looff = _bitoffset(i);
+	size_t loword = this->_data[j];
+	if (j == k) {
+		// fast path: same word
+		return (loword >> looff) & _genlomask(n);
+	}
+	size_t hiword = this->_data[k] & _genlomask(_bitoffset(i + n));
+	loword = _genhimask(looff) & loword >> looff;
+	return loword | hiword<<(maxbits-looff);
+}

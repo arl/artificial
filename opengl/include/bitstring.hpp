@@ -57,6 +57,11 @@ class bitstring {
         // Prints the bitstring memory layout in hexadecimal.
         void print_hex() const;
 
+        // Returns the n bits unsigned integer value represented by the n bits
+        // starting at the bit index i. It panics if there aren't enough bits in bs or
+        // if n is greater than the size of a machine word.
+        size_t uintn(size_t i, size_t n) const;
+
     private:
         void _bit_must_exist(size_t i) const;
 

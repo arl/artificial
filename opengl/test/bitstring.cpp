@@ -196,3 +196,52 @@ TEST_CASE("swap ranges from 2 bitstrings", "[bitstring]") {
 		REQUIRE(tt->wanty == y.string());
 	}
 }
+
+
+TEST_CASE("convert bits to uintn", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t nbits, i;
+		size_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 12> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "10",
+			nbits: 1, i: 0, want: 0},
+		{input: "111",
+			nbits: 1, i: 0, want: 1},
+		{input: "101",
+			nbits: 1, i: 1, want: 0},
+		{input: "010",
+			nbits: 1, i: 1, want: 1},
+		{input: "100",
+			nbits: 2, i: 0, want: 0},
+		{input: "1101",
+			nbits: 2, i: 1, want: 2},
+		{input: "10100000000000000000000000000000",
+			nbits: 3, i: 29, want: 5},
+		{input: "10000000000000000000000000000000",
+			nbits: 1, i: 31, want: 1},
+
+		// // LSB and MSB are on 2 separate words
+		{input: "1111111111111111111111111111111111111111111111111111111111111111",
+			nbits: 3, i: 31, want: 7},
+		{input: "1111111111111111111111111111111111111111111111111111111111111111",
+			nbits: 3, i: 30, want: 7},
+		{input: "0000000000000000000000000000001010000000000000000000000000000000",
+			nbits: 3, i: 31, want: 5},
+		{input: "0000000000000000000000000000000101000000000000000000000000000000",
+			nbits: 3, i: 30, want: 5},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		size_t got = bs.uintn(tt->i, tt->nbits);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i << " nbits:" << tt->nbits
+		   <<"\nwant:" << tt->want);
+	}
+}
