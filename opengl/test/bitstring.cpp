@@ -197,50 +197,44 @@ TEST_CASE("swap ranges from 2 bitstrings", "[bitstring]") {
 	}
 }
 
-TEST_CASE("convert bits to uintn", "[bitstring]") {
+TEST_CASE("convert bits to uint8_t", "[bitstring]") {
 	struct {
 		std::string input;
-		size_t nbits, i;
-		size_t want;
+		size_t i;
+		uint8_t want;
 	} testcase;
 
-	std::array<decltype(testcase), 12> tests = {{
+	std::array<decltype(testcase), 9> tests = {{
 		// LSB and MSB are both on the same word
-		{input: "10",
-			nbits: 1, i: 0, want: 0},
-		{input: "111",
-			nbits: 1, i: 0, want: 1},
-		{input: "101",
-			nbits: 1, i: 1, want: 0},
-		{input: "010",
-			nbits: 1, i: 1, want: 1},
-		{input: "100",
-			nbits: 2, i: 0, want: 0},
-		{input: "1101",
-			nbits: 2, i: 1, want: 2},
-		{input: "10100000000000000000000000000000",
-			nbits: 3, i: 29, want: 5},
-		{input: "10000000000000000000000000000000",
-			nbits: 1, i: 31, want: 1},
+		{input: "00000000000000000000000000000001",
+			i: 0, want: 1},
+		{input: "00000000000000000000000000000010",
+			i: 0, want: 2},
+		{input: "000000000000000001000010",
+			i: 0, want: uint8_t(1<<6) + 2},
+		{input: "111111111111111101000010",
+			i: 0, want: uint8_t(1<<6) + 2},
+		{input: "0000000000000000000000000000000111111111111111111111111111111111",
+			i: 32, want: 1},
+		{input: "00000000000000001000000111111111111111111111111111111111",
+			i: 32, want: uint8_t(1<<7) + 1},
+		{input: "100000000",
+			i: 1, want: uint8_t(1 << 7)},
 
-		// // LSB and MSB are on 2 separate words
-		{input: "1111111111111111111111111111111111111111111111111111111111111111",
-			nbits: 3, i: 31, want: 7},
-		{input: "1111111111111111111111111111111111111111111111111111111111111111",
-			nbits: 3, i: 30, want: 7},
-		{input: "0000000000000000000000000000001010000000000000000000000000000000",
-			nbits: 3, i: 31, want: 5},
-		{input: "0000000000000000000000000000000101000000000000000000000000000000",
-			nbits: 3, i: 30, want: 5},
+		// LSB and MSB are on separate words
+		{input: "11111111111111111111111010000101111111111111111111111111111111",
+			i: 31, want: uint8_t(1<<6) + 2},
+		{input: "00000000000000000000000111111100000000000000000000000000000000",
+			i: 31, want: std::numeric_limits<uint8_t>::max() - 1},
 	}};
 
 	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
 		bitstring bs(tt->input.c_str());
-		size_t got = bs.uintn(tt->i, tt->nbits);
+		uint8_t got = bs.uint8(tt->i);
 		REQUIRE(tt->want == got);
 		INFO("\n<test case>\n"
 		   <<"\ninput:" << tt->input
-		   <<"\ni:" << tt->i << " nbits:" << tt->nbits
+		   <<"\ni:" << tt->i
 		   <<"\nwant:" << tt->want);
 	}
 }
@@ -287,11 +281,11 @@ TEST_CASE("convert bits to uint16_t", "[bitstring]") {
 	}
 }
 
-TEST_CASE("convert bits to uint8_t", "[bitstring]") {
+TEST_CASE("convert bits to uint32_t", "[bitstring]") {
 	struct {
 		std::string input;
 		size_t i;
-		uint8_t want;
+		uint32_t want;
 	} testcase;
 
 	std::array<decltype(testcase), 9> tests = {{
@@ -300,31 +294,121 @@ TEST_CASE("convert bits to uint8_t", "[bitstring]") {
 			i: 0, want: 1},
 		{input: "00000000000000000000000000000010",
 			i: 0, want: 2},
-		{input: "000000000000000001000010",
-			i: 0, want: uint8_t(1<<6) + 2},
-		{input: "111111111111111101000010",
-			i: 0, want: uint8_t(1<<6) + 2},
+		{input: "01000000000000000000000000000010",
+			i: 0, want: uint32_t(1<<30) + 2},
+		{input: "1111111111111111111111111111111101000000000000000000000000000010",
+			i: 0, want: uint32_t(1<<30) + 2},
 		{input: "0000000000000000000000000000000111111111111111111111111111111111",
 			i: 32, want: 1},
-		{input: "00000000000000001000000111111111111111111111111111111111",
-			i: 32, want: uint8_t(1<<7) + 1},
-		{input: "100000000",
-			i: 1, want: uint8_t(1 << 7)},
+		{input: "1000000000000000000000000000000111111111111111111111111111111111",
+			i: 32, want: uint32_t(1<<31) + 1},
 
-		// LSB and MSB are on separate words
-		{input: "11111111111111111111111010000101111111111111111111111111111111",
-			i: 31, want: uint8_t(1<<6) + 2},
-		{input: "00000000000000000000000111111100000000000000000000000000000000",
-			i: 31, want: std::numeric_limits<uint8_t>::max() - 1},
+		// LSB and MSB are on 2 separate words
+		{input: "100000000000000000000000000000000",
+			i: 1, want: uint32_t(1 << 31)},
+		{input: "1111111111111111111101000000000000000000000000000010111111111111",
+			i: 12, want: uint32_t(1<<30) + 2},
+		{input: "0000111111111111111111111111111111100000000000000000000000000000",
+			i: 28, want: std::numeric_limits<uint32_t>::max() - 1},
 	}};
 
 	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
 		bitstring bs(tt->input.c_str());
-		uint8_t got = bs.uint8(tt->i);
+		uint32_t got = bs.uint32(tt->i);
 		REQUIRE(tt->want == got);
 		INFO("\n<test case>\n"
 		   <<"\ninput:" << tt->input
 		   <<"\ni:" << tt->i
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to uint64_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		uint64_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 9> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "0000000000000000000000000000000000000000000000000000000000000001",
+			i: 0, want: 1},
+		{input: "0000000000000000000000000000000000000000000000000000000000000010",
+			i: 0, want: 2},
+		{input: "0100000000000000000000000000000000000000000000000000000000000010",
+			i: 0, want: (uint64_t(1)<<62) + 2},
+		{input: "11111111111111111111111111111111111111111111111111111111111111110100000000000000000000000000000000000000000000000000000000000010",
+			i: 0, want: (uint64_t(1)<<62) + 2},
+		{input: "00000000000000000000000000000000000000000000000000000000000000011111111111111111111111111111111111111111111111111111111111111111",
+			i: 64, want: 1},
+		{input: "10000000000000000000000000000000000000000000000000000000000000011111111111111111111111111111111111111111111111111111111111111111",
+			i: 64, want: (uint64_t(1)<<63) + 1},
+
+		// LSB and MSB are on 2 separate words
+		{input: "10000000000000000000000000000000000000000000000000000000000000000",
+			i: 1, want: uint64_t(1) << 63},
+		{input: "1111111111111111111111111110100000000000000000000000000000000000000000000000000000000000010111111111111111111111111111111111111111111111111111111111111",
+			i: 60, want: (uint64_t(1)<<62) + 2},
+		{input: "000011111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000",
+			i: 58, want: std::numeric_limits<uint64_t>::max() - 1},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		uint64_t got = bs.uint64(tt->i);
+		CHECK(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to uintn", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t nbits, i;
+		size_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 12> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "10",
+			nbits: 1, i: 0, want: 0},
+		{input: "111",
+			nbits: 1, i: 0, want: 1},
+		{input: "101",
+			nbits: 1, i: 1, want: 0},
+		{input: "010",
+			nbits: 1, i: 1, want: 1},
+		{input: "100",
+			nbits: 2, i: 0, want: 0},
+		{input: "1101",
+			nbits: 2, i: 1, want: 2},
+		{input: "10100000000000000000000000000000",
+			nbits: 3, i: 29, want: 5},
+		{input: "10000000000000000000000000000000",
+			nbits: 1, i: 31, want: 1},
+
+		// // LSB and MSB are on 2 separate words
+		{input: "1111111111111111111111111111111111111111111111111111111111111111",
+			nbits: 3, i: 31, want: 7},
+		{input: "1111111111111111111111111111111111111111111111111111111111111111",
+			nbits: 3, i: 30, want: 7},
+		{input: "0000000000000000000000000000001010000000000000000000000000000000",
+			nbits: 3, i: 31, want: 5},
+		{input: "0000000000000000000000000000000101000000000000000000000000000000",
+			nbits: 3, i: 30, want: 5},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		size_t got = bs.uintn(tt->i, tt->nbits);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i << " nbits:" << tt->nbits
 		   <<"\nwant:" << tt->want);
 	}
 }

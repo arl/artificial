@@ -70,16 +70,12 @@ class bitstring {
         // bits in size_t (machine word).
         size_t uintn(size_t i, size_t n) const _bitcheck_;
 
-        // Returns the uint16_t value represented by the 16 bits starting at
-        // offset i. In debug builds it throws an exception if there aren't 
-        // enough bits.
-        uint16_t uint16(size_t i) const _bitcheck_;
-
-        // Returns the uint8_t value represented by the 8 bits starting at
-        // offset i. In debug builds it throws an exception if there aren't 
-        // enough bits.
+        // Returns the value represented by the N bits starting at offset i
+        // In debug builds it throws an exception if there aren't enough bits.
         uint8_t uint8(size_t i) const _bitcheck_;
-
+        uint16_t uint16(size_t i) const _bitcheck_;
+        uint32_t uint32(size_t i) const _bitcheck_;
+        uint64_t uint64(size_t i) const _bitcheck_;
 
     private:
         void _bit_must_exist(size_t i) const _bitcheck_;

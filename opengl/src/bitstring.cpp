@@ -165,6 +165,48 @@ void bitstring::_swap_bits(bitstring &x, bitstring &y, size_t w, size_t mask) {
 	y._data[w] = ykeep | xswap;
 }
 
+uint8_t bitstring::uint8(size_t i) const {
+	this->_bit_must_exist(i + 7);
+
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[_wordoffset(i)] >> off;
+	size_t hiword = this->_data[_wordoffset(i+7)] & ((1 << off) - 1);
+	return uint8_t(loword | hiword<<(maxbits-off));
+}
+
+uint16_t bitstring::uint16(size_t i) const  {
+	this->_bit_must_exist(i + 15);
+
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[_wordoffset(i)] >> off;
+	size_t hiword = this->_data[_wordoffset(i+15)] & ((1 << off) - 1);
+	return uint16_t(loword | hiword<<(maxbits-off));
+}
+
+uint32_t bitstring::uint32(size_t i) const  {
+	this->_bit_must_exist(i + 31);
+
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[_wordoffset(i)] >> off;
+	size_t hiword = this->_data[_wordoffset(i+31)] & ((1 << off) - 1);
+	return uint32_t(loword | hiword<<(maxbits-off));
+}
+
+uint64_t bitstring::uint64(size_t i) const  {
+	this->_bit_must_exist(i + 63);
+
+	// fast path: i is a multiple of 64
+	if ((i&((1<<6)-1)) == 0) {
+		return uint64_t(this->_data[i>>6]);
+	}
+
+	size_t w = _wordoffset(i);
+	size_t off = _bitoffset(i);
+	size_t loword = this->_data[w] >> off;
+	size_t hiword = this->_data[w+1] & ((1UL << off) - 1);
+	return uint64_t(loword | (hiword<<(maxbits-off)));
+}
+
 size_t bitstring::uintn(size_t i, size_t n) const {
 	#ifdef DEBUG
 	if ((n > maxbits) || (n == 0)) {		
@@ -184,22 +226,4 @@ size_t bitstring::uintn(size_t i, size_t n) const {
 	size_t hiword = this->_data[k] & _genlomask(_bitoffset(i + n));
 	loword = _genhimask(looff) & loword >> looff;
 	return loword | hiword<<(maxbits-looff);
-}
-
-uint16_t bitstring::uint16(size_t i) const _bitcheck_ {
-	this->_bit_must_exist(i + 15);
-
-	size_t off = _bitoffset(i);
-	size_t loword = this->_data[_wordoffset(i)] >> off;
-	size_t hiword = this->_data[_wordoffset(i+15)] & ((1 << off) - 1);
-	return uint16_t(loword | hiword<<(maxbits-off));
-}
-
-uint8_t bitstring::uint8(size_t i) const _bitcheck_ {
-	this->_bit_must_exist(i + 7);
-
-	size_t off = _bitoffset(i);
-	size_t loword = this->_data[_wordoffset(i)] >> off;
-	size_t hiword = this->_data[_wordoffset(i+7)] & ((1 << off) - 1);
-	return uint8_t(loword | hiword<<(maxbits-off));
 }
