@@ -1,6 +1,21 @@
 #include "catch.hpp"
 #include "bitstring.hpp"
 #include <string>
+#include <climits>
+#include <iostream>
+
+template<typename T>
+void print_bin(const T& t){
+	size_t nBytes=sizeof(T);
+	char* rawPtr((char*)(&t));
+	for(size_t byte=0; byte<nBytes; byte++) {
+		for(size_t bit=0; bit<CHAR_BIT; bit++) {
+			std::cout << (((rawPtr[byte])>>bit)&1);
+		}
+	}
+	std::cout << std::endl;
+};
+
 
 TEST_CASE("set/clear/flip individual bits", "[bitstring]") {
     bitstring bs(65);
@@ -409,6 +424,111 @@ TEST_CASE("convert bits to uintn", "[bitstring]") {
 		INFO("\n<test case>\n"
 		   <<"\ninput:" << tt->input
 		   <<"\ni:" << tt->i << " nbits:" << tt->nbits
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to int8_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		int8_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 6> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "11111111",
+			i: 0, want: -1},
+		{input: "01111111",
+			i: 0, want: std::numeric_limits<int8_t>::max()},
+		{input: "10000000",
+			i: 0, want: std::numeric_limits<int8_t>::min()},
+		// LSB and MSB are on 2 separate words
+		{input: "111111110000000000000000000000000000000",
+			i: 31, want: -1},
+		{input: "011111110000000000000000000000000000000",
+			i: 31, want: std::numeric_limits<int8_t>::max()},
+		{input: "100000001111111111111111111111111111111",
+			i: 31, want: std::numeric_limits<int8_t>::min()},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		int8_t got = bs.int8(tt->i);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to int16_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		int16_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 6> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "1111111111111111",
+			i: 0, want: -1},
+		{input: "0111111111111111",
+			i: 0, want: std::numeric_limits<int16_t>::max()},
+		{input: "1000000000000000",
+			i: 0, want: std::numeric_limits<int16_t>::min()},
+		// LSB and MSB are on 2 separate words
+		{input: "11111111111111110000000000000000000000000000000",
+			i: 31, want: -1},
+		{input: "01111111111111110000000000000000000000000000000",
+			i: 31, want: std::numeric_limits<int16_t>::max()},
+		{input: "10000000000000001111111111111111111111111111111",
+			i: 31, want: std::numeric_limits<int16_t>::min()},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		int16_t got = bs.int16(tt->i);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
+		   <<"\nwant:" << tt->want);
+	}
+}
+
+TEST_CASE("convert bits to int32_t", "[bitstring]") {
+	struct {
+		std::string input;
+		size_t i;
+		int32_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 6> tests = {{
+		// LSB and MSB are both on the same word
+		{input: "11111111111111111111111111111111",
+			i: 0, want: -1},
+		{input: "01111111111111111111111111111111",
+			i: 0, want: std::numeric_limits<int32_t>::max()},
+		{input: "10000000000000000000000000000000",
+			i: 0, want: std::numeric_limits<int32_t>::min()},
+		// LSB and MSB are on 2 separate words
+		{input: "111111111111111111111111111111110000000000000000000000000000000",
+			i: 31, want: -1},
+		{input: "011111111111111111111111111111110000000000000000000000000000000",
+			i: 31, want: std::numeric_limits<int32_t>::max()},
+		{input: "100000000000000000000000000000001111111111111111111111111111111",
+			i: 31, want: std::numeric_limits<int32_t>::min()},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		int32_t got = bs.int32(tt->i);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\ni:" << tt->i
 		   <<"\nwant:" << tt->want);
 	}
 }

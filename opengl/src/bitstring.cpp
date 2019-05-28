@@ -227,3 +227,24 @@ size_t bitstring::uintn(size_t i, size_t n) const {
 	loword = _genhimask(looff) & loword >> looff;
 	return loword | hiword<<(maxbits-looff);
 }
+
+ssize_t bitstring::intn(size_t i, size_t n) const {
+	return ssize_t(this->uintn(i, n));
+}
+
+int8_t bitstring::int8(size_t i) const {
+	return int8_t(this->uint8(i));
+}
+
+int16_t bitstring::int16(size_t i) const {
+	return int16_t(this->uint16(i));
+}
+
+int32_t bitstring::int32(size_t i) const {
+	return int32_t(this->uint32(i));
+}
+
+int64_t bitstring::int64(size_t i) const {
+	return int64_t(this->uint64(i));
+}
+
