@@ -59,6 +59,7 @@ class bitstring {
         // number of bits of the bitstring + 1 (terminal zero).
         void string(char * s) const;
 
+        // Returns a 0 and 1 string representation of the bitstring.
         std::string string() const;
 
         // Prints the bitstring memory layout in hexadecimal.
