@@ -830,3 +830,28 @@ TEST_CASE("set uint64 to bits", "[bitstring]") {
 			<<"\nwant:" << tt->want);
 	}
 }
+
+TEST_CASE("convert gray-coded bits to uint16", "[bitstring]") {
+	struct {
+		std::string input;
+		uint16_t want;
+	} testcase;
+
+	std::array<decltype(testcase), 3> tests = {{
+		{input: "0000000000000000",
+			want: 0},
+		{input: "0000000000000111",
+			want: 5},
+		{input: "1000000000000000",
+			want: std::numeric_limits<uint16_t>::max()},
+	}};
+
+	for (auto tt = tests.begin(); tt < tests.end(); ++tt) {
+		bitstring bs(tt->input.c_str());
+		uint16_t got = bs.gray16(0);
+		REQUIRE(tt->want == got);
+		INFO("\n<test case>\n"
+		   <<"\ninput:" << tt->input
+		   <<"\nwant:" << tt->want);
+	}
+}

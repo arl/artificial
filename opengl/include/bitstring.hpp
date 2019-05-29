@@ -96,6 +96,11 @@ class bitstring {
         // if n is greater than the number of bits in size_t (machine word).
         ssize_t intn(size_t i, size_t n) const _bitcheck_;
 
+        // Returns the unsigned value represented by the n gray-coded bits
+        // starting at offset i.
+        //
+        // Throws an exception in debug builds if there aren't enough bits.
+        uint16_t gray16(size_t i) const _bitcheck_;
         // Sets the bits starting at offset i to be the representation of the
         // unsigned value x.
         // Throws an exception in debug builds if there aren't enough bits.
