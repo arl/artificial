@@ -248,3 +248,44 @@ int64_t bitstring::int64(size_t i) const {
 	return int64_t(this->uint64(i));
 }
 
+void bitstring::set_uintn(size_t i, size_t n, size_t x) {
+	#ifdef DEBUG
+	if ((n > maxbits) || (n == 0)) {		
+		throw std::invalid_argument("set_uintn supports unsigned integers from 1 to 'word size' bits long");
+	}
+	#endif
+	this->_bit_must_exist(i + n - 1);
+
+	size_t lobit = _bitoffset(i);
+	size_t j = _wordoffset(i);
+	size_t k = _wordoffset(i + n - 1);
+	if (j == k) {
+		// fast path: same word
+		x = (x & _genlomask(n)) << lobit;
+		this->_data[j] = _transferbits(this->_data[j], x, _genmask(lobit, lobit+n));
+		return;
+	}
+	// slow path: first and last bits are on different words
+	// transfer bits to low word
+	size_t lon = maxbits - lobit; // how many bits of n we transfer to loword
+	this->_data[j] = _transferbits(this->_data[j], x<<lobit, _genhimask(lon));
+
+	// transfer bits to high word
+	this->_data[k] = _transferbits(this->_data[k], x>>lon, _genlomask(n-lon));
+}
+
+bool bitstring::operator == (const bitstring & other) const {
+	if (this == &other)
+		return true;
+	if (this->_length != other._length)
+		return false;
+	// word by word
+	for (size_t i = 0; i < this->_ndata; ++i)
+		if (this->_data[i] != other._data[i])
+			return false;
+	return true;
+}
+
+bool bitstring::operator != (const bitstring & other) const {
+	return !(this->operator==(other));
+}

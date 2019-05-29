@@ -96,6 +96,13 @@ class bitstring {
         int32_t int32(size_t i) const _bitcheck_;
         int64_t int64(size_t i) const _bitcheck_;
 
+        // Sets the n bits starting at offset i with n LSB of x.
+        // Throws an exception in debug builds if there aren't enough bits.
+        void set_uintn(size_t i, size_t n, size_t x) _bitcheck_;
+
+        bool operator == (const bitstring & other) const;
+        bool operator != (const bitstring & other) const;
+
     private:
         void _bit_must_exist(size_t i) const _bitcheck_;
 

@@ -43,4 +43,11 @@ size_t _genmask(size_t l, size_t h) {
 	return _genlomask(h) & _genhimask(l);
 }
 
+// Returns the uint that results from transfering some bits from src to dst, 
+// where set bits in mask specify the bits to transfer.
+size_t _transferbits(size_t dst, size_t src, size_t mask) {
+	return (dst&~mask) | (src&mask);
+}
+
+
 #endif //INCLUDE_BITOPS_H
