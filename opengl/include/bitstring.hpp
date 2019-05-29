@@ -64,13 +64,6 @@ class bitstring {
         // Prints the bitstring memory layout in hexadecimal.
         void print_hex() const;
 
-        // Returns the n bits unsigned integer value represented by the n bits
-        // starting at offset i.
-        //
-        // Throws an exception in debug builds if there aren't enough bits or
-        // if n is greater than the number of bits in size_t (machine word).
-        size_t uintn(size_t i, size_t n) const _bitcheck_;
-
         // Returns the unsigned value represented by the N bits starting at 
         // offset i.
         //
@@ -80,14 +73,14 @@ class bitstring {
         uint32_t uint32(size_t i) const _bitcheck_;
         uint64_t uint64(size_t i) const _bitcheck_;
 
-        // Returns the n bits signed integer value represented by the n bits
+        // Returns the n bits unsigned integer value represented by the n bits
         // starting at offset i.
         //
         // Throws an exception in debug builds if there aren't enough bits or
         // if n is greater than the number of bits in size_t (machine word).
-        ssize_t intn(size_t i, size_t n) const _bitcheck_;
+        size_t uintn(size_t i, size_t n) const _bitcheck_;
 
-        // Returns the signed value represented by the N bits starting at 
+        // Returns the signed value represented by the n bits starting at 
         // offset i.
         //
         // Throws an exception in debug builds if there aren't enough bits.
@@ -95,6 +88,21 @@ class bitstring {
         int16_t int16(size_t i) const _bitcheck_;
         int32_t int32(size_t i) const _bitcheck_;
         int64_t int64(size_t i) const _bitcheck_;
+
+        // Returns the n bits signed integer value represented by the n bits
+        // starting at offset i.
+        //
+        // Throws an exception in debug builds if there aren't enough bits or
+        // if n is greater than the number of bits in size_t (machine word).
+        ssize_t intn(size_t i, size_t n) const _bitcheck_;
+
+        // Sets the bits starting at offset i to be the representation of the
+        // unsigned value x.
+        // Throws an exception in debug builds if there aren't enough bits.
+        void set_uint8(size_t i, uint8_t x) _bitcheck_;
+        void set_uint16(size_t i, uint16_t x) _bitcheck_;
+        void set_uint32(size_t i, uint32_t x) _bitcheck_;
+        void set_uint64(size_t i, uint64_t x) _bitcheck_;
 
         // Sets the n bits starting at offset i with n LSB of x.
         // Throws an exception in debug builds if there aren't enough bits.

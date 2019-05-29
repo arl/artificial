@@ -248,9 +248,96 @@ int64_t bitstring::int64(size_t i) const {
 	return int64_t(this->uint64(i));
 }
 
+void bitstring::set_uint8(size_t i, uint8_t x) {
+	this->_bit_must_exist(i + 7);
+
+	size_t lobit = _bitoffset(i);
+	size_t j = _wordoffset(i);
+	size_t k = _wordoffset(i + 7);
+	if (j == k) {
+		// fast path: same word
+		size_t neww = size_t(x) << lobit;
+		size_t mask = _genmask(lobit, lobit+8);
+		this->_data[j] = _transferbits(this->_data[j], neww, mask);
+		return;
+	}
+	// transfer bits to low word
+	this->_data[j] = _transferbits(this->_data[j], size_t(x)<<lobit, _genhimask(lobit));
+	// transfer bits to high word
+	size_t lon = maxbits - lobit;
+	this->_data[k] = _transferbits(this->_data[k], size_t(x)>>lon, _genlomask(8-lon));
+}
+
+void bitstring::set_uint16(size_t i, uint16_t x) {
+	this->_bit_must_exist(i + 15);
+
+	size_t lobit = _bitoffset(i);
+	size_t j = _wordoffset(i);
+	size_t k = _wordoffset(i + 15);
+	if (j == k) {
+		// fast path: same word
+		size_t neww = size_t(x) << lobit;
+		size_t mask = _genmask(lobit, lobit+16);
+		this->_data[j] = _transferbits(this->_data[j], neww, mask);
+		return;
+	}
+	// transfer bits to low word
+	this->_data[j] = _transferbits(this->_data[j], size_t(x)<<lobit, _genhimask(lobit));
+	// transfer bits to high word
+	size_t lon = maxbits - lobit;
+	this->_data[k] = _transferbits(this->_data[k], size_t(x)>>lon, _genlomask(16-lon));
+}
+
+void bitstring::set_uint32(size_t i, uint32_t x) {
+	this->_bit_must_exist(i + 31);
+
+	size_t lobit = _bitoffset(i);
+	size_t j = _wordoffset(i);
+	size_t k = _wordoffset(i + 31);
+	if (j == k) {
+		// fast path: same word
+		size_t neww = size_t(x) << lobit;
+		size_t mask = _genmask(lobit, lobit+32);
+		this->_data[j] = _transferbits(this->_data[j], neww, mask);
+		return;
+	}
+	// transfer bits to low word
+	this->_data[j] = _transferbits(this->_data[j], size_t(x)<<lobit, _genhimask(lobit));
+	// transfer bits to high word
+	size_t lon = maxbits - lobit;
+	this->_data[k] = _transferbits(this->_data[k], size_t(x)>>lon, _genlomask(32-lon));
+}
+
+void bitstring::set_uint64(size_t i, uint64_t x) {
+	this->_bit_must_exist(i + 63);
+
+	size_t lobit = _bitoffset(i);
+	size_t j = _wordoffset(i);
+
+	// fast path: i is a multiple of 64
+	if ((i&((1<<6)-1)) == 0) {
+		this->_data[i>>6] = size_t(x);
+		return;
+	}
+
+	size_t k = _wordoffset(i + 63);
+	if (j == k) {
+		// fast path: same word
+		size_t neww = size_t(x) << lobit;
+		size_t mask = _genmask(lobit, lobit+64);
+		this->_data[j] = _transferbits(this->_data[j], neww, mask);
+		return;
+	}
+	// transfer bits to low word
+	this->_data[j] = _transferbits(this->_data[j], size_t(x)<<lobit, _genhimask(lobit));
+	// transfer bits to high word
+	size_t lon = maxbits - lobit;
+	this->_data[k] = _transferbits(this->_data[k], size_t(x)>>lon, _genlomask(64-lon));
+}
+
 void bitstring::set_uintn(size_t i, size_t n, size_t x) {
 	#ifdef DEBUG
-	if ((n > maxbits) || (n == 0)) {		
+	if ((n > maxbits) || (n == 0)) {
 		throw std::invalid_argument("set_uintn supports unsigned integers from 1 to 'word size' bits long");
 	}
 	#endif
