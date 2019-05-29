@@ -20,26 +20,25 @@ size_t _bitoffset(size_t n) {
 	return n & (maxbits - 1LU);
 }
 
-// bitmask returns a mask where only the nth bit of a uint is set.
+// Returns a mask where only the nth bit of a uint is set.
 size_t _bitmask(size_t n) {
 	return 1LU << n;
 }
 
-// genlomask returns a mask to keep the n LSB (least significant bits).
+// Returns a mask to keep the n LSB (least significant bits).
 // Undefined behaviour if n is greater than uintsize.
 size_t _genlomask(size_t n) {
 	return maxval >> (maxbits - n);
 }
 
-// genhimask returns a mask to keep the n MSB (most significant bits).
-// Undefined behaviour if n is greater than uintsize.
+// Returns a mask to keep the n MSB (most significant bits).
+// Undefined behaviour if n is greater than maxbits.
 size_t _genhimask(size_t n) {
 	return maxval << n;
 }
 
-// genmask returns a mask that keeps the bits in the range [l, h)
-// behaviour undefined if any argument is greater than the size of
-// a machine word.
+// Returns a mask that keeps the bits in the range [l, h).
+// Undefined behaviour if n is greater than maxbits.
 size_t _genmask(size_t l, size_t h) {
 	return _genlomask(h) & _genhimask(l);
 }
