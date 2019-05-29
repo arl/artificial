@@ -100,7 +100,11 @@ class bitstring {
         // starting at offset i.
         //
         // Throws an exception in debug builds if there aren't enough bits.
+        uint8_t gray8(size_t i) const _bitcheck_;
         uint16_t gray16(size_t i) const _bitcheck_;
+        uint32_t gray32(size_t i) const _bitcheck_;
+        uint64_t gray64(size_t i) const _bitcheck_;
+
         // Sets the bits starting at offset i to be the representation of the
         // unsigned value x.
         // Throws an exception in debug builds if there aren't enough bits.

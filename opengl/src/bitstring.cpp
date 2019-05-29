@@ -228,8 +228,37 @@ size_t bitstring::uintn(size_t i, size_t n) const {
 	return loword | hiword<<(maxbits-looff);
 }
 
+uint8_t bitstring::gray8(size_t i) const {
+	uint8_t v = this->uint8(i);
+	v ^= v >> 4;
+	v ^= v >> 2;
+	v ^= v >> 1;
+	return v;
+}
+
 uint16_t bitstring::gray16(size_t i) const {
 	uint16_t v = this->uint16(i);
+	v ^= v >> 8;
+	v ^= v >> 4;
+	v ^= v >> 2;
+	v ^= v >> 1;
+	return v;
+}
+
+uint32_t bitstring::gray32(size_t i) const {
+	uint32_t v = this->uint32(i);
+	v ^= v >> 16;
+	v ^= v >> 8;
+	v ^= v >> 4;
+	v ^= v >> 2;
+	v ^= v >> 1;
+	return v;
+}
+
+uint64_t bitstring::gray64(size_t i) const {
+	uint64_t v = this->uint64(i);
+	v ^= v >> 32;
+	v ^= v >> 16;
 	v ^= v >> 8;
 	v ^= v >> 4;
 	v ^= v >> 2;
