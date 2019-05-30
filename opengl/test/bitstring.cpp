@@ -16,6 +16,22 @@ void print_bin(const T& t){
 	std::cout << std::endl;
 };
 
+TEST_CASE("create bitstring from external memory", "[bitstring]") {
+	{
+		size_t bits[1] = {3};
+		bitstring bs(&bits[0], 1);
+		REQUIRE(bs.count_ones() == 1);
+		REQUIRE(bs.count_zeroes() == 0);
+	}
+	{
+		size_t bits[2] = {std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()};
+		size_t nbits = std::numeric_limits<size_t>::digits + 1;
+		bitstring bs(&bits[0], nbits);
+		REQUIRE(bs.count_ones() == nbits);
+		REQUIRE(bs.count_zeroes() == 0);
+	}
+}
+
 TEST_CASE("set/clear/flip individual bits", "[bitstring]") {
     bitstring bs(65);
 	for (size_t i = 0; i < 65; ++i) {

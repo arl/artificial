@@ -15,6 +15,7 @@ bitstring::bitstring(size_t length) {
 	this->_ndata = (this->_length + maxbits - 1) / maxbits;
 	this->_data = new size_t[this->_ndata];
 	memset(&this->_data[0], 0, sizeof(size_t) * this->_ndata);
+	this->_owned = true;
 }
 
 bitstring::bitstring(const bitstring & other) {
@@ -22,6 +23,16 @@ bitstring::bitstring(const bitstring & other) {
 	this->_ndata = other._ndata;
 	this->_data = new size_t[this->_ndata];
 	memcpy(this->_data, other._data, sizeof(size_t) * this->_ndata);
+	this->_owned = true;
+}
+
+bitstring::bitstring(size_t *data, size_t nbits) {
+	this->_length = nbits;
+	this->_ndata = (this->_length + maxbits - 1) / maxbits;
+	this->_data = data; // keep external pointer
+	// zero out out-of-range bits
+	this->_data[this->_ndata-1] &= _genlomask(_bitoffset(nbits));
+	this->_owned = false;
 }
 
 bitstring::bitstring(const char * s) : bitstring(strlen(s)) {
@@ -39,7 +50,8 @@ bitstring::bitstring(const char * s) : bitstring(strlen(s)) {
 }
 
 bitstring::~bitstring() {
-	delete(this->_data);
+	if (this->_owned)
+		delete(this->_data);
 	this->_data = nullptr;
 	this->_length = 0;
 	this->_ndata = 0;

@@ -13,17 +13,24 @@
 class bitstring {
     private:
         size_t _length;  // length in bits of the bit string
-        size_t _ndata;   // size of data array;
+        size_t _ndata;   // size of data array.
         size_t *_data;   // bits are packed in an array.
+        bool _owned;     // wether we own _data.
 
     public:
         // Creates a bitstring of the specified length (in bits) with all bits
         // initially set to zero (off).
         bitstring(size_t length) noexcept(false);
-        bitstring(const bitstring & other);
-
+        // Creates a bitstring from another one (copy);
+        bitstring(const bitstring & other) noexcept(false);
+        // Creates a bitstring from external memory. 
+        // Undefined behaviour if data is not large enough to contain n bits.
+        // Bits of data having an offset >= nbits will be zeroed out, so some 
+        // methods will continue to function properly.
+        bitstring(size_t *data, size_t nbits);
         // Creates a bitstring from a 0 and 1's string.
         bitstring(const char * s) noexcept(false);
+
         ~bitstring();
 
         // Returns the number of bits defining the bitstring.
