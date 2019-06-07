@@ -20,7 +20,7 @@ sht_diff(bitstring *Bitstring, value *float32);
 #endif
 
 int32_t sht_init(uint32_t w, uint32_t h);
-int32_t sht_render_image(unsigned char * img_data, uint32_t * bitstring);
+int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits);
 int32_t sht_cleanup();
 
 #ifdef __cplusplus
