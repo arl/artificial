@@ -67,14 +67,14 @@ int32_t art_destroy_context(struct art_ctx * ctx) {
     ctx = NULL;
     return EARTOK;
 }
-/*
-int art_set_background(float r, float g , float b, float a) {
+
+int art_set_screen_background(float r, float g , float b, float a) {
     glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT);
     return EARTOK;
 }
 
-int art_save_png(art_ctx * ctx, const char * filename) {
+int art_save_screen_png(struct art_ctx * ctx, const char * filename) {
     GLsizei width = ctx->screen_w;
     GLsizei height = ctx->screen_h;
     char *buffer;
@@ -84,7 +84,7 @@ int art_save_png(art_ctx * ctx, const char * filename) {
 #else
     buffer = (char*)calloc (4, width * height);
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-#endif
+#endif    
 
     // Write image Y-flipped because OpenGL
     int ret = stbi_write_png(filename,
@@ -98,11 +98,11 @@ int art_save_png(art_ctx * ctx, const char * filename) {
         free(buffer);
 #endif
     if (ret == 0) {
-        return EIOFAILURE;
+        return EARTIO;
     }
     return EARTOK;
 }
-*/
+
 static void _error_callback(int error, const char* description) {
     fprintf(stderr, "Error %d: %s\n", error, description);
 }
