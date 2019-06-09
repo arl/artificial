@@ -76,11 +76,11 @@ std::string bitstring::string() const {
 // Crashes if i is not a valid bit index for bs, that is if i is
 // greater than bs.length.
 void bitstring::_bit_must_exist(size_t i) const {
-	#ifdef DEBUG
+#ifdef DEBUG
 	if (i >= this->_length) {
 		throw std::invalid_argument("bitstring index out of range");
 	}
-	#endif
+#endif
 }
 
 void bitstring::print_hex() const {
@@ -220,11 +220,11 @@ uint64_t bitstring::uint64(size_t i) const  {
 }
 
 size_t bitstring::uintn(size_t i, size_t n) const {
-	#ifdef DEBUG
+#ifdef DEBUG
 	if ((n > maxbits) || (n == 0)) {		
 		throw std::invalid_argument("uintn supports unsigned integers from 1 to 'word size' bits long");
 	}
-	#endif //DEBUG
+#endif //DEBUG
 	this->_bit_must_exist(i + n - 1);
 
 	size_t j = _wordoffset(i);
@@ -386,11 +386,11 @@ void bitstring::set_uint64(size_t i, uint64_t x) {
 }
 
 void bitstring::set_uintn(size_t i, size_t n, size_t x) {
-	#ifdef DEBUG
+#ifdef DEBUG
 	if ((n > maxbits) || (n == 0)) {
 		throw std::invalid_argument("set_uintn supports unsigned integers from 1 to 'word size' bits long");
 	}
-	#endif
+#endif
 	this->_bit_must_exist(i + n - 1);
 
 	size_t lobit = _bitoffset(i);
