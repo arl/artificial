@@ -72,8 +72,9 @@ func Test_draw(t *testing.T) {
 
 			f, err := os.Open(gf)
 			require.NoError(t, err, "failed reading .golden file")
-			defer f.Close()
+
 			want, err := png.Decode(f)
+			f.Close()
 			require.NoError(t, err, "failed to decode .golden file")
 
 			if !reflect.DeepEqual(img, want) {

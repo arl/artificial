@@ -36,9 +36,9 @@ point:
 */
 
 const (
-	nbpchannel = 8        // number of bits per color channel
-	nbpcolor   = 8 * 4    // number of bits per color
-	nbheader   = nbpcolor // number of bits in header
+	nbpchannel = 8              // number of bits per color channel
+	nbpcolor   = nbpchannel * 4 // number of bits per color
+	nbheader   = nbpcolor       // number of bits in header
 )
 
 func totalBits(cfg Config) uint {
