@@ -278,8 +278,15 @@ uint64_t bitstring::gray64(size_t i) const {
 	return v;
 }
 
-ssize_t bitstring::intn(size_t i, size_t n) const {
-	return ssize_t(this->uintn(i, n));
+uint64_t bitstring::grayn(size_t i, size_t n) const {
+	uint64_t v = this->uintn(i, n);
+	v ^= v >> 32;
+	v ^= v >> 16;
+	v ^= v >> 8;
+	v ^= v >> 4;
+	v ^= v >> 2;
+	v ^= v >> 1;
+	return v;
 }
 
 int8_t bitstring::int8(size_t i) const {
@@ -296,6 +303,10 @@ int32_t bitstring::int32(size_t i) const {
 
 int64_t bitstring::int64(size_t i) const {
 	return int64_t(this->uint64(i));
+}
+
+ssize_t bitstring::intn(size_t i, size_t n) const {
+	return ssize_t(this->uintn(i, n));
 }
 
 void bitstring::set_uint8(size_t i, uint8_t x) {

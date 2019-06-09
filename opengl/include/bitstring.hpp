@@ -113,6 +113,12 @@ class bitstring {
         uint32_t gray32(size_t i) const _bitcheck_;
         uint64_t gray64(size_t i) const _bitcheck_;
 
+        // Returns the n bits unsigned integer value represented by the n
+        // gray-coded bits starting at offset i.
+        //
+        // Throws an exception in debug builds if there aren't enough bits.
+        uint64_t grayn(size_t i, size_t n) const;
+
         // Sets the bits starting at offset i to be the representation of the
         // unsigned value x.
         // Throws an exception in debug builds if there aren't enough bits.
