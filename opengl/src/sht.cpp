@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdexcept>
 #include "sht.h"
 #include "art.h"
 #include "shader.h"
@@ -13,6 +14,7 @@ typedef struct {
     unsigned int vao;
     unsigned int vbo;
     unsigned int ntris;
+    float *vertex_data;
 } sht_ctx;
 
 // TODO: remove those global contexts
@@ -34,13 +36,108 @@ int32_t sht_init(uint32_t w, uint32_t h) {
     return EARTOK;
 }
 
+
+// bitstring decoding constants
+constexpr size_t nbpchannel = 8;              // number of bits per color channel
+constexpr size_t nbpcolor   = nbpchannel * 4; // number of bits per color
+constexpr size_t nbheader   = nbpcolor;       // number of bits in header
+
+static_assert(nbpchannel == 8, "currently only nbpchannel == 8 is supported");
+
+// vertex data encoding constants
+constexpr size_t ncoordspvertex  = 3;  // 3 floats per vertex (3d coords)
+constexpr size_t nchannelspcolor = 4;  // 4 color components per vertex (RGBA)
+constexpr size_t nfloatspvertex  = ncoordspvertex + nchannelspcolor;
+constexpr size_t nfloatsptri     = 3 * nfloatspvertex;
+
+// computes the size of vertex data (in number of floats) required represent a
+// shapify triangle image.
+// size_t _sht_num_floats(size_t ntris, size_t wbits, size_t hbits)  {
+	// size_t nbpoint = wbits + hbits; // bits per point
+	// size_t nbtri = 3*nbpoint + nbpcolor;  // bits per triangle
+	// return nbheader + uint(cfg.Ntris)*nbtri; // number total of bits per image
+// }
+
+
+int32_t _sht_alloc_vertex_data()  {
+    gshtctx->vertex_data = new float[nfloatsptri * gshtctx->ntris];
+    return EARTOK;
+    // how many floats should our vertex data be made of?
+    // size_t nfloats = _sht_num_floats(bs, 6, 6);
+    /* 
+func extractColorNRGBA(bs *bitstring.Bitstring, i, bitsPerChannel uint) color.NRGBA {
+	return color.NRGBA{
+		R: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*0)),
+		G: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*1)),
+		B: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*2)),
+		A: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*3)),
+	}
+*/
+}
+
+void _sht_free_vertex_data() {
+    if (gshtctx->vertex_data != nullptr)
+        delete[] gshtctx;
+    gshtctx->vertex_data = nullptr;
+}
+
+int32_t _sht_fill_vertex_data(const bitstring & bs, size_t wbits, size_t hbits) {
+    const float w = float(1 << wbits);
+    const float h = float(1 << hbits);
+    const size_t nverts = 3;
+    size_t ibit = 0;
+    // skip header (background color)
+    ibit += nbheader;
+    float * verts = gshtctx->vertex_data; 
+    for (size_t itri = 0; itri < gshtctx->ntris; ++itri) {
+        // note: triangle are monocolor, i.e all vertices share an unique color
+        float r = float(bs.gray8(ibit + nbpchannel*0)) / 255.f;
+        float g = float(bs.gray8(ibit + nbpchannel*1)) / 255.f;
+        float b = float(bs.gray8(ibit + nbpchannel*2)) / 255.f;
+        float a = float(bs.gray8(ibit + nbpchannel*3)) / 255.f;
+        ibit += nbpcolor;
+        for (size_t ivert = 0; ivert < nverts; ++ivert) {
+            // decode color from the bistring, into vertex data
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + ncoordspvertex + 0] = r;
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + ncoordspvertex + 1] = g;
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + ncoordspvertex + 2] = b;
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + ncoordspvertex + 3] = a;
+
+            // decode position from the bistring, into vertex data
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + 0] = float(bs.grayn(ibit, wbits)) / w; // x
+            ibit += wbits;
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + 1] = float(bs.grayn(ibit, hbits)) / h; // y
+            ibit += hbits;
+            verts[itri*nfloatsptri + (nfloatspvertex * ivert) + 2] = .0f; // z
+        }
+    }    
+#ifdef DEBUG
+	if (ibit != bs.length()) {
+        #include <sstream>
+        std::stringstream str("");
+        str << "ibit:" << ibit << ", bs.length():" << bs.length() << std::endl;
+		throw std::runtime_error(str.str());
+	}
+#endif
+    return EARTOK;
+}
+
 int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits) {
-    printf("we are in sht_render_image\n");
-    bitstring bs(bits, 100);
+    // TODO: should somewhat be configurable
+    const size_t ntris = 1;
+    const size_t wbits = 6, hbits = 6;
+    gshtctx->ntris = ntris;
+    _sht_alloc_vertex_data();
+    bitstring bs("1000000000000000001000000000000000001000000000000000100000000000000010000000000000000000000000000000");
+    // bitstring bs("1100000000001000011000001000001000011000000000000000100000000000000010000000000000000000000000000000");
+    _sht_fill_vertex_data(bs, wbits, hbits);
+
+    // printf("we are in sht_render_image\n");
+    // bitstring bs(bits, 100);
 
     Shader shader("./shaders/shader.vert", "./shaders/shader.frag");
-
-    float vertex_data[] = {
+    /*
+    float vertex_data_old[] = {
         // positions          // colors
         -0.9f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.05f,  // bottom left 
         -0.0f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.05f,  // bottom right
@@ -56,9 +153,20 @@ int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits) 
         0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 0.05f, // bottom right
         0.f, 0.45f, 0.0f,0.0f, 0.0f, 1.0f, 0.05f,      // top 
     };
+    std::cerr << "sizeof(vertex_data_old)" << sizeof(vertex_data_old)/3 << std::endl;
+    */
+    // sht_fill_buffers(&vertex_data[0], sizeof(vertex_data));
+    // float vertex_data[] = {
+        // .96875f,  .984375f, .0f,       .0f,.98f,.0f,.98f,
+        // .984375f, .96875f,  .0f,       .0f,.98f,.0f,.98f,
+        // .0f,      .5f,      .0f,       .0f,.98f,.0f,.98f,
+    // };
 
-    sht_fill_buffers(&vertex_data[0], sizeof(vertex_data));
-    art_set_screen_background(0.9f, 0.9f, 0.9f, 1.0f);
+    sht_fill_buffers(&gshtctx->vertex_data[0], nfloatsptri * ntris * sizeof(float));
+
+    // std::cerr << "nfloatsptri * ntris" << nfloatsptri * ntris << std::endl;
+    // sht_fill_buffers(&vertex_data[0], nfloatsptri * ntris * sizeof(float));
+    // art_set_screen_background(0.9f, 0.9f, 0.9f, 1.0f);
     shader.use();
 
     // Rendering
@@ -73,13 +181,10 @@ int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits) 
     return art_save_screen_png(gctx, "screen.png");
 }
 
-const unsigned int ncoords_per_vertex = 3;  // 3 floats per vertex (3d coords)
-const unsigned int nchannels_per_color = 4; // 4 color components per vertex (RGBA)
-
 // create vbo and vao, fill them with the vertex data. 
 // TODO: pass the sht_ctx instead of using the global one
 int32_t sht_fill_buffers(float *vertex_data, size_t nvertex_data) {
-    gshtctx->ntris = nvertex_data / (sizeof(float) * (3 * ncoords_per_vertex + 3 * nchannels_per_color));
+    // gshtctx->ntris = nvertex_data / (sizeof(float) * (3 * ncoords_per_vertex + 3 * nchannels_per_color));
 
     // create a vertex array and bind it.
     glGenVertexArrays(1, &gshtctx->vao);
@@ -93,9 +198,9 @@ int32_t sht_fill_buffers(float *vertex_data, size_t nvertex_data) {
     glBufferData(GL_ARRAY_BUFFER, nvertex_data, vertex_data, GL_STATIC_DRAW);
 
     // specify attribute pointers: position and color
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0); // vec3 position
+    glVertexAttribPointer(0, ncoordspvertex, GL_FLOAT, GL_FALSE, nfloatspvertex * sizeof(float), (void*)0); // vec3 position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float))); // vec3 color
+    glVertexAttribPointer(1, nchannelspcolor, GL_FLOAT, GL_FALSE, nfloatspvertex * sizeof(float), (void*)(3 * sizeof(float))); // vec4 color
     glEnableVertexAttribArray(1);
 
     // unbind the vertex buffer and the vertex array.
