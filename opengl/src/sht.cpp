@@ -122,50 +122,24 @@ int32_t _sht_fill_vertex_data(const bitstring & bs, size_t wbits, size_t hbits) 
     return EARTOK;
 }
 
+size_t dbg_count = 0; // DBG: debug-only saved filename counter
+
 int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits) {
-    // TODO: should somewhat be configurable
-    const size_t ntris = 1;
     const size_t wbits = 6, hbits = 6;
+    // Deduce the number of triangles from:
+    //  - constants
+    //  - number of bits, nbits.
+    //  - image dimensions, wbits/hbits
+    const size_t ntris = (nbits - nbheader) / (3 * (wbits + hbits) + nbpcolor);
     gshtctx->ntris = ntris;
     _sht_alloc_vertex_data();
-    bitstring bs("1000000000000000001000000000000000001000000000000000100000000000000010000000000000000000000000000000");
-    // bitstring bs("1100000000001000011000001000001000011000000000000000100000000000000010000000000000000000000000000000");
+    bitstring bs(bits, nbits); 
     _sht_fill_vertex_data(bs, wbits, hbits);
 
-    // printf("we are in sht_render_image\n");
-    // bitstring bs(bits, 100);
-
     Shader shader("./shaders/shader.vert", "./shaders/shader.frag");
-    /*
-    float vertex_data_old[] = {
-        // positions          // colors
-        -0.9f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.05f,  // bottom left 
-        -0.0f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.05f,  // bottom right
-        -0.45f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.05f,  // top 
-
-        // positions         // colors
-        0.0f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 0.05f,  // bottom left 
-        0.9f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 0.05f,  // bottom right
-        0.45f, 0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 0.05f,  // top 
-
-        // positions         // colors
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 0.05f,  // bottom left 
-        0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 0.05f, // bottom right
-        0.f, 0.45f, 0.0f,0.0f, 0.0f, 1.0f, 0.05f,      // top 
-    };
-    std::cerr << "sizeof(vertex_data_old)" << sizeof(vertex_data_old)/3 << std::endl;
-    */
-    // sht_fill_buffers(&vertex_data[0], sizeof(vertex_data));
-    // float vertex_data[] = {
-        // .96875f,  .984375f, .0f,       .0f,.98f,.0f,.98f,
-        // .984375f, .96875f,  .0f,       .0f,.98f,.0f,.98f,
-        // .0f,      .5f,      .0f,       .0f,.98f,.0f,.98f,
-    // };
 
     sht_fill_buffers(&gshtctx->vertex_data[0], nfloatsptri * ntris * sizeof(float));
 
-    // std::cerr << "nfloatsptri * ntris" << nfloatsptri * ntris << std::endl;
-    // sht_fill_buffers(&vertex_data[0], nfloatsptri * ntris * sizeof(float));
     // art_set_screen_background(0.9f, 0.9f, 0.9f, 1.0f);
     shader.use();
 
@@ -178,7 +152,17 @@ int32_t sht_render_image(unsigned char * img_data, size_t * bits, size_t nbits) 
     glDrawArrays(GL_TRIANGLES, 0, gshtctx->ntris * 3);
 
     // Extract from GPU and place into img_data
-    return art_save_screen_png(gctx, "screen.png");
+
+    // TODO: save to img_data and not to file
+    //       (this is just because the 'save to memory' is not implemented yet)!
+    // <<DBG
+    #include <sstream>
+    std::stringstream str("");
+    str << "screen_" << dbg_count << ".png";
+    ++dbg_count;
+
+    // >>DBG
+    return art_save_screen_png(gctx, str.str().c_str());
 }
 
 // create vbo and vao, fill them with the vertex data. 
