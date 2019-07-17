@@ -50,29 +50,9 @@ constexpr size_t nchannelspcolor = 4;  // 4 color components per vertex (RGBA)
 constexpr size_t nfloatspvertex  = ncoordspvertex + nchannelspcolor;
 constexpr size_t nfloatsptri     = 3 * nfloatspvertex;
 
-// computes the size of vertex data (in number of floats) required represent a
-// shapify triangle image.
-// size_t _sht_num_floats(size_t ntris, size_t wbits, size_t hbits)  {
-	// size_t nbpoint = wbits + hbits; // bits per point
-	// size_t nbtri = 3*nbpoint + nbpcolor;  // bits per triangle
-	// return nbheader + uint(cfg.Ntris)*nbtri; // number total of bits per image
-// }
-
-
 int32_t _sht_alloc_vertex_data()  {
     gshtctx->vertex_data = new float[nfloatsptri * gshtctx->ntris];
     return EARTOK;
-    // how many floats should our vertex data be made of?
-    // size_t nfloats = _sht_num_floats(bs, 6, 6);
-    /* 
-func extractColorNRGBA(bs *bitstring.Bitstring, i, bitsPerChannel uint) color.NRGBA {
-	return color.NRGBA{
-		R: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*0)),
-		G: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*1)),
-		B: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*2)),
-		A: uint8(bs.Grayn(bitsPerChannel, i+bitsPerChannel*3)),
-	}
-*/
 }
 
 void _sht_free_vertex_data() {
